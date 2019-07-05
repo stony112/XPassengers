@@ -1,7 +1,0 @@
-INDEX VERSION 1.4+D:\EclipseProjects\XPassengers\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-634259323.index
-3309134712.index
-1582970219.index
-1779917949.index
-1939501625.index
-2792456580.index

@@ -1,3 +1,0 @@
-<Context>
-	<Resource name="jdbc/xpassengers" auth="Container" type="javax.sql.DataSource" username="root" password="Steppen3weihe" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql:/localhost:3306/xpassengers"  maxActive="15" maxIdle="3"/>
-</Context>
