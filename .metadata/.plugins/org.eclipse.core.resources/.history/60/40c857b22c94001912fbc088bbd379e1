@@ -1,0 +1,66 @@
+<%@tag description="Overall Page template" pageEncoding="UTF-8"%>
+<%@ tag import="java.sql.*" %>
+<%@ tag import="java.util.Date" %>
+<jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
+<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<a class="xp_createNew" href="buyAircraft.jsp">Buy new Aircraft</a>
+<form method="post" action="/SellAircraftServlet">
+<%
+	ResultSet boughtAirplanes = dao.getAirlinesAirplanesData("*", utils.getActiveAirline());
+	
+	while (boughtAirplanes.next()) {
+		double price;
+		int airplaneID = boughtAirplanes.getInt("airplaneid"); 
+		ResultSet airplanes = dao.getSingleContent("*", "airplanes", airplaneID);
+		int quality = boughtAirplanes.getInt("quality");
+		int flighthours = boughtAirplanes.getInt("flighthours");
+		
+		String curPos = ((boughtAirplanes.getString("lastposition") == null) ? "" : boughtAirplanes.getString("lastposition"));
+		Timestamp lf  = boughtAirplanes.getTimestamp("lastflight");
+		if (lf != null) {
+			Date lastflight = new java.util.Date(lf.getTime());
+		}
+		price = utils.getSellingPrice(quality, flighthours, airplanes.getFloat("price"));
+		%> 
+		<div class="xp_aircraftSnippet">
+			<div class="xp_aircraftInfoWrapper">
+				<h4><%= airplanes.getString("name") %></h4>
+				<div class="xp_aircraftInfo">
+					<div>
+						<span class="xp_aircraftInfoName">Empty-Weight:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("emptyweight") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Take-Off-Weight:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("toweight") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Fuel-Weight:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("fuel") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Fuel-Type:</span><span class="xp_aircraftInfoValue"><%= airplanes.getString("fuelType") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Seats:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("seats") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Quality:</span><span class="xp_aircraftInfoValue"><%= quality %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Flighthours:</span><span class="xp_aircraftInfoValue"><%= flighthours %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Last Flight:</span><span class="xp_aircraftInfoValue"><%= lastflight %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Current Position:</span><span class="xp_aircraftInfoValue"><%= curPos %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Sell-Price:</span><span class="xp_aircraftInfoValue"><%= utils.doubleToPrice(price) %> €</span>
+					</div>
+				</div>
+			</div>
+			<button type="submit" name="sell" value="sell<%= airplanes.getInt("id") + "-" + price %>">sell</button>
+		</div>
+		<%
+	}
+%>
+</form>

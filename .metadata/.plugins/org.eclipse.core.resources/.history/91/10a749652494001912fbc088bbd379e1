@@ -1,0 +1,15 @@
+<%@tag description="Overall Page template" pageEncoding="UTF-8"%>
+<%@ tag import="java.sql.*" %>
+<jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
+<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<%
+	ResultSet airplanes = dao.getResults("airplanes");
+%>
+<form method="post" action="/BuyAirplaneServlet">
+	<fieldset>
+		Name <input type="text" name="airlinename" /><br />
+		Homebase (ICAO) <input type="text" name="homebase"/><br />
+		IATA <input type="text" name="iata"/><br />
+	</fieldset>
+	<input type="submit" value="Save"/>
+</form>

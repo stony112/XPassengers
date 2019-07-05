@@ -1,0 +1,6 @@
+var sliderFirst = document.getElementById("xp_sliderFirst");
+var outputFirst = document.getElementById("xp_valueFirst");
+outputFirst.innerHTML = sliderFirst.value;
+sliderFirst.oninput = function() {
+	outputFirst.innerHTML = this.value;
+}

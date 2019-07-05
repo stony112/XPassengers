@@ -1,0 +1,17 @@
+<%@tag description="Overall Page template" pageEncoding="UTF-8"%>
+<%@ tag import="java.sql.*" %>
+<jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
+<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<%
+	utils.setIni(); 
+	int activeAirline = utils.getActiveAirline();
+	String airlineName;
+	if (activeAirline == 0) {
+		airlineName = "No Active Airline";
+	} else {	
+		airlineName = dao.getSingleContent("*", "airlines", utils.getActiveAirline()).getString("name");
+		ResultSet activeAirlineSet = dao.getSingleContent("*", "airlines", activeAirline);
+		double balance = activeAirlineSet.getDouble("balance");
+		out.println(utils.doubleToPrice(balance));
+	}
+%>

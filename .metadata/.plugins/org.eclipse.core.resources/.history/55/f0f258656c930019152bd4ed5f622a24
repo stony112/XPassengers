@@ -1,0 +1,45 @@
+<%@tag description="Overall Page template" pageEncoding="UTF-8"%>
+<%@ tag import="java.sql.*" %>
+<jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
+<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<a class="xp_createNew" href="buyAirplane.jsp">Buy new Airplane</a>
+<form method="post" action="/AircraftServlet">
+<%
+	ResultSet boughtAirplanes = dao.getAirlinesAirplanesData("*", utils.getActiveAirline());
+	
+	while (boughtAirplanes.next()) {
+		double price;
+		int airplaneID = boughtAirplanes.getInt("airplaneid"); 
+		ResultSet airplanes = dao.getSingleContent("*", "airplanes", airplaneID);
+		price = utils.getSellingPrice(boughtAirplanes.getInt("quality"), boughtAirplanes.getInt("flighthours"), airplanes.getFloat("price"));
+		%> 
+		<div class="xp_aircraftSnippet">
+			<div class="xp_aircraftInfoWrapper">
+				<h4><%= boughtAirplanes.getString("name") %></h4>
+				<div class="xp_aircraftInfo">
+					<div>
+						<span class="xp_aircraftInfoName">Empty-Weight:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("emptyweight") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Take-Off-Weight:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("toweight") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Fuel-Weight:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("fuel") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Fuel-Type:</span><span class="xp_aircraftInfoValue"><%= airplanes.getString("fuelType") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Seats:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("seats") %></span>
+					</div>
+					<div>
+						<span class="xp_aircraftInfoName">Sell-Price:</span><span class="xp_aircraftInfoValue"><%= utils.doubleToPrice(price) %> €</span>
+					</div>
+				</div>
+			</div>
+			<button type="submit" name="sell" value="sell<%= airplanes.getInt("id") %>">sell</button>
+		</div>
+		<%
+	}
+%>
+</form>

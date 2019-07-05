@@ -1,0 +1,44 @@
+<%@tag description="Overall Page template" pageEncoding="UTF-8"%>
+<%@ tag import="java.sql.*" %>
+<%@ tag import="java.util.Date" %>
+<jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
+<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<%
+	int id = Integer.valueOf(request.getParameter("id"));
+	ResultSet aircraft = dao.getSingleContent("*", "airlines_airplanes", id);
+	ResultSet aircraftDetail = dao.getSingleContent("*", "airplanes", aircraft.getInt("airplaneid"));
+%>
+
+<script>
+window.onload = function () {
+	sliders = document.getElementsByClassName("xp_slider");
+	for(let slider of sliders) {
+		sliderID = slider.id;
+		output = document.getElementById(sliderID+"Value");
+		slider.oninput = function() {
+			output.innerHTML = this.value;
+		}
+	});
+}
+</script>
+
+<form method="post" action="/EditAircraftServlet">
+	<h3><%= aircraftDetail.getString("name") %></h3>
+	<div class="xp_seatconfig">
+		<div class="xp_sliderWrapper">
+			<label for="sliderFirst" class="xp_sliderLabel">First</label>
+			<input name="sliderFirst" type="range" min="0" max="<%= aircraftDetail.getInt("seats") %>" value="<%= aircraft.getInt("first") %>" class="xp_slider" id="xp_sliderFirst"/>
+			<span id="xp_sliderFirstValue" class="xp_sliderValue"></span>
+		</div>
+		<div class="xp_sliderWrapper">
+			<label for="sliderBusiness" class="xp_sliderLabel">Business</label>
+			<input name="sliderBusiness" type="range" min="0" max="<%= aircraftDetail.getInt("seats") %>" value="<%= aircraft.getInt("business") %>" class="xp_slider" id="xp_sliderBusiness"/>
+			<span id="xp_sliderBusinessValue" class="xp_sliderValue"></span>
+		</div>
+		<div class="xp_sliderWrapper">
+			<label for="sliderEconomy" class="xp_sliderLabel">Economy</label>
+			<input type="range" min="0" max="<%= aircraftDetail.getInt("seats") %>" value="<%= aircraft.getInt("economy") %>" class="xp_slider" id="xp_sliderEconomy"/>
+			<span id="xp_sliderEconomyValue" class="xp_sliderValue"></span>
+		</div>
+	</div>
+</form>
