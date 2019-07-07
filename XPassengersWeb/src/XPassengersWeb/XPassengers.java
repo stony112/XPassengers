@@ -126,23 +126,6 @@ public class XPassengers extends JFrame {
 		});
 		mnAirplanes.add(mntmCheckForNew);
 		
-		
-		JMenuItem mntmEditAircraft = new JMenuItem("Edit Aircraft");
-		mntmEditAircraft.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				EditAircraft editAircraft;
-				try {
-					editAircraft = new EditAircraft();
-					editAircraft.setVisible(true);
-				} catch (ClassNotFoundException | FileNotFoundException | SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}				
-			}
-		});
-		mnAirplanes.add(mntmEditAircraft);
-		
-		
 		JMenu mnFlights = new JMenu("Flights");
 		menuBar.add(mnFlights);
 		

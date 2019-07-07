@@ -10,6 +10,7 @@
 	int seats = aircraftDetail.getInt("seats");
 	int curBus = aircraft.getInt("business");
 	int curFir = aircraft.getInt("first");
+	int curEco = aircraft.getInt("economy");
 	double relEcoFirst = utils.relEcoFirst;
 	double relEcoBusni = utils.relEcoBusni;
 	double relBusniFirst = utils.relBusniFirst;
@@ -26,6 +27,7 @@ window.onload = function () {
 	
 	sliderFirst.value = <%= curFir %>;
 	sliderBusiness.value = <%= curBus %>;
+	outputEconomy.value = <%= curEco %>;
 	getSeatConfig (sliderBusiness.value, sliderFirst.value);
 	
 	outputFirst.innerHTML = sliderFirst.value;
@@ -65,7 +67,7 @@ function getSeatConfig(b, f, slider) {
 	return eco;	
 }
 </script>
-
+<a href="/aircrafts/aircrafts.jsp">Back</a>
 <form method="post" action="/EditAircraftServlet">
 	<h3><%= aircraftDetail.getString("name") %></h3>
 	<div class="xp_seatconfig">
