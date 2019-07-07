@@ -8,18 +8,15 @@
 	ResultSet aircraft = dao.getSingleContent("*", "airlines_airplanes", id);
 	ResultSet aircraftDetail = dao.getSingleContent("*", "airplanes", aircraft.getInt("airplaneid"));
 	int seats = aircraftDetail.getInt("seats");
-	double relEcoFirst = 2.5;
-	double relEcoBusni = 1.3;
-	double relBusniFirst = 2.1;
+	int curBus = aircraft.getInt("business");
+	int curFir = aircraft.getInt("first");
+	double relEcoFirst = utils.relEcoFirst;
+	double relEcoBusni = utils.relEcoBusni;
+	double relBusniFirst = utils.relBusniFirst;
 %>
 
 <script>
 window.onload = function () {
-	var relEcoFirst = <%= relEcoFirst %>,
-	, relEcoBusni =  <%= relEcoBusni %>,
-	, relBusniFirst =  <%= relBusniFirst %>
-	, seats = <%= seats %>
-	
 	var sliderFirst = document.getElementById("xp_sliderFirst");
 	var sliderBusiness = document.getElementById("xp_sliderBusiness");
 	var sliderEconomy = document.getElementById("xp_sliderEconomy");
@@ -27,28 +24,45 @@ window.onload = function () {
 	var outputBusiness = document.getElementById("xp_sliderBusinessValue");
 	var outputEconomy = document.getElementById("xp_sliderEconomyValue");
 	
-	if (seats < 15) {
-		
-	} else if (seats < 130) {
-		
-	} else {
-		
-	}
+	sliderFirst.value = <%= curFir %>;
+	sliderBusiness.value = <%= curBus %>;
+	getSeatConfig (sliderBusiness.value, sliderFirst.value);
 	
 	outputFirst.innerHTML = sliderFirst.value;
 	sliderFirst.oninput = function() {
 		outputFirst.innerHTML = this.value;
+		outputEconomy.innerHTML = getSeatConfig(sliderBusiness, sliderFirst, "first");
 	}		
 	
 	outputBusiness.innerHTML = sliderBusiness.value;
 	sliderBusiness.oninput = function() {
 		outputBusiness.innerHTML = this.value;
-	}		
-	
-	outputEconomy.innerHTML = sliderEconomy.value;
-	sliderEconomy.oninput = function() {
-		outputEconomy.innerHTML = this.value;
+		outputEconomy.innerHTML = getSeatConfig(sliderBusiness, sliderFirst, "business");
 	}
+}
+
+function getSeatConfig(b, f, slider) {
+	var relEcoFirst = <%= relEcoFirst %>
+	, relEcoBusni =  <%= relEcoBusni %>
+	, relBusniFirst =  <%= relBusniFirst %>
+	, seats = <%= seats %>
+	
+	business = b.value*relEcoBusni;
+	first = f.value*relEcoFirst;
+	
+	eco = 0;
+	eco = seats - business - first;
+	eco = Math.floor(eco);
+	if (slider === "first") {
+		b.max = Math.floor((business + eco) / relEcoBusni);
+	} else if (slider === "business") {
+		f.max = Math.floor((first + eco) / relEcoFirst); 
+	}
+	
+	saveAircraft = document.getElementById("saveAircraft");
+	saveAircraft.value = "save"+<%= aircraftDetail.getInt("id") %>+"-" + eco;
+	
+	return eco;	
 }
 </script>
 
@@ -71,8 +85,8 @@ window.onload = function () {
 		<% } %>
 		<div class="xp_sliderWrapper">
 			<label for="sliderEconomy" class="xp_sliderLabel">Economy</label>
-			<input name="sliderEconomy"type="range" min="0" max="<%= seats %>" value="<%= aircraft.getInt("economy") %>" class="xp_slider" id="xp_sliderEconomy"/>
 			<span id="xp_sliderEconomyValue" class="xp_sliderValue"></span>
 		</div>
 	</div>
+	<button type="submit" id="saveAircraft" name="save" value="save">Save</button>
 </form>

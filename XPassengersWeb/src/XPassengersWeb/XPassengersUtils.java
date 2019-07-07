@@ -28,9 +28,9 @@ import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
 
 public class XPassengersUtils {
-	double relEcoFirst = 2.5;
-	double relEcoBusni = 1.3;
-	double relBusniFirst = 2.1;
+	public double relEcoFirst = 2.5;
+	public double relEcoBusni = 1.3;
+	public double relBusniFirst = 2.1;
 	String jetA1 = "jetA1";
 	String avgas = "avgas";
 	double toLbs = 2.20462;
@@ -51,6 +51,18 @@ public class XPassengersUtils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
+	}
+	
+	public double getRelEcoFirst() {
+		return relEcoFirst;
+	}
+	
+	public double getRelEcoBusni() {
+		return relEcoBusni;
+	}
+	
+	public double getRelBusniFirst() {
+		return relBusniFirst;
 	}
 	
 	public String buildIDName(int id, String name) {

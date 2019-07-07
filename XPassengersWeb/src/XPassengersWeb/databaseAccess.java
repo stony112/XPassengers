@@ -215,17 +215,16 @@ public class databaseAccess {
     	createAirplane.executeUpdate();
     }
     
-    public void updatePlane(int activeAirline, int plane, String l, int e, int b, int f) throws SQLException {
+    public void updatePlane(int activeAirline, int plane, int e, int b, int f) throws SQLException {
     	if (!dbInit) {
     		initDB();
     	}
-    	PreparedStatement updatePlane = connect.prepareStatement("update airlines_airplanes set livery=?, economy=?, business=?, first=? where airlineid=? and airplaneid=?");
-    	updatePlane.setString(1, l);
-    	updatePlane.setInt(2, e);
-    	updatePlane.setInt(3, b);
-    	updatePlane.setInt(4, f);
-    	updatePlane.setInt(5, activeAirline);
-    	updatePlane.setInt(6, plane);
+    	PreparedStatement updatePlane = connect.prepareStatement("update airlines_airplanes set economy=?, business=?, first=? where airlineid=? and airplaneid=?");
+    	updatePlane.setInt(1, e);
+    	updatePlane.setInt(2, b);
+    	updatePlane.setInt(3, f);
+    	updatePlane.setInt(4, activeAirline);
+    	updatePlane.setInt(5, plane);
     	updatePlane.executeUpdate();
     }
     
