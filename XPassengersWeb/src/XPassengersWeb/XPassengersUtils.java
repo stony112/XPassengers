@@ -31,8 +31,8 @@ public class XPassengersUtils {
 	public double relEcoFirst = 2.5;
 	public double relEcoBusni = 1.3;
 	public double relBusniFirst = 2.1;
-	String jetA1 = "jetA1";
-	String avgas = "avgas";
+	public String jetA1 = "jetA1";
+	public String avgas = "avgas";
 	double toLbs = 2.20462;
 	Wini ini;
 	
@@ -205,6 +205,7 @@ public class XPassengersUtils {
 	public int checkNewPlanes() throws ClassNotFoundException, SQLException, InvalidFileFormatException, IOException {
 		databaseAccess dao = new databaseAccess();
 		dao.initDB();
+		setIni();
 		String airplanePath;
 		String airplaneName;
 		String airplaneACFName;

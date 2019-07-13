@@ -56,6 +56,14 @@
         <servlet-name>SaveOptionsServlet</servlet-name>
         <url-pattern>/SaveOptionsServlet</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>CheckNewPlanes</servlet-name>
+        <servlet-class>XPassengersWeb.CheckNewPlanes</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CheckNewPlanes</servlet-name>
+        <url-pattern>/CheckNewPlanes</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.jsp</welcome-file>

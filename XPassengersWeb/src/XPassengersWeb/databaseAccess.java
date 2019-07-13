@@ -144,11 +144,14 @@ public class databaseAccess {
     	return false;
     }
     
-    public float getLastFuelprice(String type) {
+    public float getLastFuelprice(String type, java.sql.Date date) {
     	try {
     		if (!dbInit) {
         		initDB();
         	}
+    		if (!checkFuelprice(type,date)) {
+    			createFuelprice(type);
+    		}
 			Statement get = connect.createStatement();
 	    	ResultSet results = get.executeQuery("SELECT * FROM fuelprices where type = '" + type + "' ORDER BY date DESC LIMIT 1" );
 	    	if (results.next()) {
@@ -169,7 +172,7 @@ public class databaseAccess {
     		initDB();
     	}
     	if (!checkFuelprice(type,date)) {
-    		float lastPrice = getLastFuelprice(type);
+    		float lastPrice = getLastFuelprice(type, date);
     		float newPrice;
     		if (lastPrice != 0) {
 	    		float randPriceChange = ThreadLocalRandom.current().nextInt(-100, 100)/10;
@@ -272,34 +275,15 @@ public class databaseAccess {
     		initDB();
     	}
 		try {
-			PreparedStatement buyFuel = connect.prepareStatement("update airlines set balance = ? where id = ?");
-			buyFuel.setDouble(1, newBalance);
-			buyFuel.setDouble(2, utils.getActiveAirline());
-			buyFuel.executeUpdate();
+			PreparedStatement balance = connect.prepareStatement("update airlines set balance = ? where id = ?");
+			balance.setDouble(1, newBalance);
+			balance.setDouble(2, utils.getActiveAirline());
+			balance.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
-
-	public void buyFuel(int activeAirline, Double newBalance, double completeJetA1, double completeAvGas, BuyFuel jframe) {
-		if (!dbInit) {
-    		initDB();
-    	}
-		try {
-			PreparedStatement buyFuel = connect.prepareStatement("update airlines set availableFuelJetA1 = ?, availableFuelAvGas = ?, balance = ? where id = ?");
-			buyFuel.setDouble(1, completeJetA1);
-			buyFuel.setDouble(2, completeAvGas);
-			buyFuel.setDouble(3, newBalance);
-			buyFuel.setInt(4, activeAirline);
-			buyFuel.executeUpdate();
-			JOptionPane.showMessageDialog(jframe, "You've successfully bought fuel!", "Fuel bought!", JOptionPane.INFORMATION_MESSAGE);
-			jframe.dispose();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 	public void storeFuel(double fuelDif, String fuelType) {
 		if (!dbInit) {
@@ -322,8 +306,9 @@ public class databaseAccess {
 			
 			double newFuel = availableFuel - fuelDif;
 			if (newFuel < 0) {
+				java.sql.Date date = utils.getSQLTodaysDate();
 				double balance = airline.getDouble("balance");
-				float fuelPrice = getLastFuelprice(fuelType);
+				float fuelPrice = getLastFuelprice(fuelType, date);
 				double fuelQuantity = newFuel * -1;
 				double completeFuelprice = fuelPrice * fuelQuantity;
 				double newBalance = balance - completeFuelprice;
