@@ -71,6 +71,9 @@ window.onload = function () {
 			outputRefuel.innerHTML = this.value;
 		}
 	}
+	
+	buyFuelButton = document.getElementById("buyFuelButton");
+	buyFuelButton.addEventListener("click", buyFuel);
 }
 
 function getSeatConfig(b, f, slider) {
@@ -98,9 +101,15 @@ function getSeatConfig(b, f, slider) {
 }
 
 function buyFuel() {
-	console.log("XXX");
 	modal = document.getElementById("buyFuelModal");
+	close = document.getElementById("xp_close");
 	modal.style.display = "block";
+	close.addEventListener("click", closeModal);
+}
+
+function closeModal() {
+	modal = document.getElementById("buyFuelModal");
+	modal.style.display = "none";
 }
 </script>
 <a href="/aircrafts/aircrafts.jsp">Back</a>
@@ -142,30 +151,29 @@ function buyFuel() {
 				<input name="sliderRefuel" type="range" min="0" max="<%= fuelWeight %>" value="<%= fuelquantity %>" class="xp_slider" id="xp_sliderRefuel"/>
 				<span id="xp_sliderRefuelValue" class="xp_sliderValue"></span><span>/<%= fuelWeight %></span>
 			</div>
-			<input type="button" id="buyFuel" name="buyFuel" onclick="buyFuel()" value="Buy Fuel" />
+			<input type="button" id="buyFuelButton" name="buyFuel" value="Buy Fuel" />
 			<input type="hidden" name="fuelType" value="<%= fuelType %>" />
 		</div>
 	</div>
 	<button type="submit" id="saveAircraft" name="save" value="save">Save</button>
 </form>
-<div id="buyFuelModal" class="xp_modal" style="display: none">
-	<h4>Buy Fuel</h4>
-	<div>
-		<label for="fuelType">Fuel Type: </label>
-		<select name="fuelType" name="fuelType">
-			<option value="jetA1">JetA1</option>
-			<option value="AvGas">AvGas</option>
-		</select>
+<form id="buyFuelModal" class="xp_modal_wrapper" style="display: none"  method="post" action="/BuyFuelServlet">
+	<div class="xp_modal"> 
+		<span id="xp_close" class="xp_close">X</span>
+		<div class="xp_modal_inner">
+			<h4>Buy Fuel</h4>
+			<div>
+				<label for="fuelType">Fuel Type: </label>
+				<select name="fuelType">
+					<option value="jetA1">JetA1</option>
+					<option value="AvGas">AvGas</option>
+				</select>
+			</div>
+			<div>
+				<label for="fuelAmmount">Fuel Ammount: </label>
+				<input type="number" name="fuelAmmount"/>
+			</div>
+			<button type="submit" id="buyFuelServlet" name="buy" value="buy">Buy</button>
+		</div>
 	</div>
-	<div>
-		<label for="fuelAmmount">Fuel Ammount: </label>
-		<input type="number" name="fuelAmmount"/>
-	</div>
-</div>
-<script>
-function buyFuel() {
-	console.log("XXX");
-	modal = document.getElementById("buyFuelModal");
-	modal.style.display = "block";
-}
-</script>
+</form>

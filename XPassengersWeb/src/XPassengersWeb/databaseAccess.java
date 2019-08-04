@@ -325,6 +325,23 @@ public class databaseAccess {
 		}
 	}
 	
+	public void buyFuel(String fuelType, double newFuel) {
+		PreparedStatement storeFuel;
+		try {
+			if (fuelType == utils.avgas) {
+				storeFuel = connect.prepareStatement("update airlines set availableFuelAvGas = ? where id = ?");
+			} else {
+				storeFuel = connect.prepareStatement("update airlines set availableFuelJetA1 = ? where id = ?");
+			}
+			storeFuel.setDouble(1, newFuel);
+			storeFuel.setInt(2, utils.getActiveAirline());
+			storeFuel.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
 	public void updatePlaneFuel(int aircraftid, double newFuel) {
 		if (!dbInit) {
     		initDB();
