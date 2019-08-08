@@ -17,7 +17,6 @@ public class BuyFuelServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
 		XPassengersUtils utils = new XPassengersUtils();
 		databaseAccess dao = new databaseAccess();
-		java.sql.Date date = utils.getSQLTodaysDate();
 		String fuelType = request.getParameter("fuelType");
 		double fuelAmmount = Double.parseDouble(request.getParameter("fuelAmmount"));
 		int activeAirline = utils.getActiveAirline();
@@ -25,7 +24,7 @@ public class BuyFuelServlet extends HttpServlet {
 		try {
 			ResultSet airline = dao.getSingleContent("*", "airlines", activeAirline);
 			double balance = airline.getDouble("balance");
-			float fuelPrice = dao.getLastFuelprice(fuelType,date);;
+			float fuelPrice = dao.createFuelprice(fuelType);
 			if (fuelType.equals(utils.jetA1)) {
 				curFuel = airline.getDouble("availableFuelJetA1");
 			} else {

@@ -144,14 +144,11 @@ public class databaseAccess {
     	return false;
     }
     
-    public float getLastFuelprice(String type, java.sql.Date date) {
+    public float getLastFuelprice(String type) {
     	try {
     		if (!dbInit) {
         		initDB();
         	}
-    		if (!checkFuelprice(type,date)) {
-    			createFuelprice(type);
-    		}
 			Statement get = connect.createStatement();
 	    	ResultSet results = get.executeQuery("SELECT * FROM fuelprices where type = '" + type + "' ORDER BY date DESC LIMIT 1" );
 	    	if (results.next()) {
@@ -166,13 +163,13 @@ public class databaseAccess {
     	return 0;
     }
     
-    public void createFuelprice(String type) throws SQLException {
+    public float createFuelprice(String type) throws SQLException {
     	java.sql.Date date = utils.getSQLTodaysDate();
     	if (!dbInit) {
     		initDB();
     	}
     	if (!checkFuelprice(type,date)) {
-    		float lastPrice = getLastFuelprice(type, date);
+    		float lastPrice = getLastFuelprice(type);
     		float newPrice;
     		if (lastPrice != 0) {
 	    		float randPriceChange = ThreadLocalRandom.current().nextInt(-100, 100)/10;
@@ -185,7 +182,8 @@ public class databaseAccess {
     		createFuelprice.setDate(2, date);
     		createFuelprice.setString(3, type);
     		createFuelprice.executeUpdate();
-    	}    	
+    	}   
+    	return getLastFuelprice(type);
     }
     
     public void createPilot(String firstname, String lastname, java.sql.Date birthday, int airline) throws SQLException {
@@ -306,9 +304,8 @@ public class databaseAccess {
 			
 			double newFuel = availableFuel - fuelDif;
 			if (newFuel < 0) {
-				java.sql.Date date = utils.getSQLTodaysDate();
 				double balance = airline.getDouble("balance");
-				float fuelPrice = getLastFuelprice(fuelType, date);
+				float fuelPrice = createFuelprice(fuelType);
 				double fuelQuantity = newFuel * -1;
 				double completeFuelprice = fuelPrice * fuelQuantity;
 				double newBalance = balance - completeFuelprice;

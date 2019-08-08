@@ -24,6 +24,8 @@
 	} else if (fuelType.equals(utils.jetA1)) {
 		fuelAvailable = airline.getDouble("availableFuelJetA1");
 	}
+	float avgasPrice = dao.createFuelprice(utils.avgas);
+	float jetA1Price = dao.createFuelprice(utils.jetA1);
 %>
 
 <script>
@@ -41,6 +43,8 @@ window.onload = function () {
 	var curFuelInTank = <%= fuelAvailable %>;
 	var curFuel = <%= fuelquantity %>;
 	var save = document.getElementById("saveAircraft");
+	var selectFuelType = document.getElementById("selectFuelType");
+	var selectedFuelprice = document.getElementById("xp_selectedFuelprice");
 	getSeatConfig (sliderBusiness.value, sliderFirst.value);
 	
 	outputFirst.innerHTML = sliderFirst.value;
@@ -74,6 +78,14 @@ window.onload = function () {
 	
 	buyFuelButton = document.getElementById("buyFuelButton");
 	buyFuelButton.addEventListener("click", buyFuel);
+	
+	selectFuelType.onchange = function() {
+		if (this.value == "<%= utils.avgas %>") {
+			selectedFuelprice.innerHTML = <%= avgasPrice %>;
+		} else {
+			selectedFuelprice.innerHTML = <%= jetA1Price %>;
+		}
+	}
 }
 
 function getSeatConfig(b, f, slider) {
@@ -164,14 +176,18 @@ function closeModal() {
 			<h4>Buy Fuel</h4>
 			<div>
 				<label for="fuelType">Fuel Type: </label>
-				<select name="fuelType">
-					<option value="jetA1">JetA1</option>
-					<option value="AvGas">AvGas</option>
+				<select name="fuelType" id="selectFuelType">
+					<option value="jetA1"><%= utils.jetA1 %></option>
+					<option value="AvGas"><%= utils.avgas %></option>
 				</select>
 			</div>
 			<div>
 				<label for="fuelAmmount">Fuel Ammount: </label>
-				<input type="number" name="fuelAmmount"/>
+				<input type="number" name="fuelAmmount" id="fuelAmmount"/>
+			</div>
+			<div>
+				<span>Fuelprice: </span><span id="xp_selectedFuelprice"></span>
+				<span>Sum: </span><span id="xp_sumFuelprice"></span>
 			</div>
 			<button type="submit" id="buyFuelServlet" name="buy" value="buy">Buy</button>
 		</div>
