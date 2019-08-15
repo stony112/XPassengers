@@ -80,6 +80,14 @@
         <servlet-name>SavePricesServlet</servlet-name>
         <url-pattern>/SavePricesServlet</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>createFlightServlet</servlet-name>
+        <servlet-class>XPassengersWeb.createFlightServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>createFlightServlet</servlet-name>
+        <url-pattern>/createFlightServlet</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.jsp</welcome-file>

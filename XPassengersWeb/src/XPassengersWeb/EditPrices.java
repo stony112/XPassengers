@@ -24,11 +24,7 @@ public class EditPrices extends JFrame {
 
 	private JPanel contentPane;
 	
-	final static Double economyMax = (double) 50;
-	final static Double businessMax = (double) 150;
-	final static Double firstMax = (double) 300;
-	final static Double cargoMax = (double) 10;
-	final static Double freeMax = (double) 50;
+
 
 	/**
 	 * Create the frame.

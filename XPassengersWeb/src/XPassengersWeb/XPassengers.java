@@ -74,16 +74,6 @@ public class XPassengers extends JFrame {
 		});
 		mnAirlines.add(mntmPrices);
 		
-		JMenuItem mntmBuyFuel = new JMenuItem("Buy Fuel");
-		mntmBuyFuel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				BuyFuel buyFuel;
-				buyFuel = new BuyFuel();
-				buyFuel.setVisible(true);
-			}
-		});
-		mnAirlines.add(mntmBuyFuel);
-		
 		JMenu mnPilots = new JMenu("Pilots");
 		menuBar.add(mnPilots);
 		

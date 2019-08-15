@@ -34,6 +34,11 @@ public class XPassengersUtils {
 	public String jetA1 = "jetA1";
 	public String avgas = "avgas";
 	double toLbs = 2.20462;
+	final static double economyMax = (double) 50;
+	final static double businessMax = (double) 150;
+	final static double firstMax = (double) 300;
+	final static double cargoMax = (double) 10;
+	final static double freeMax = (double) 50;
 	Wini ini;
 	
 	public void setIni() {
