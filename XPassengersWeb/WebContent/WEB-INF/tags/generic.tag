@@ -43,6 +43,7 @@
 			<div class="xp_menu">
 				<ul>
 					<li class="xp_menuitem"><a href="/airlines/airlines.jsp">Airlines</a></li>
+					<li class="xp_menuitem"><a href="/airlines/prices.jsp">Prices</a></li>
 					<li class="xp_menuitem"><a href="/pilots/pilots.jsp">Pilots</a></li>
 					<li class="xp_menuitem"><a href="/aircrafts/aircrafts.jsp">Aircrafts</a></li>
 					<li class="xp_menuitem"><a href="/options.jsp">Options</a></li>

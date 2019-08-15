@@ -72,6 +72,14 @@
         <servlet-name>BuyFuelServlet</servlet-name>
         <url-pattern>/BuyFuelServlet</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>SavePricesServlet</servlet-name>
+        <servlet-class>XPassengersWeb.SavePricesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SavePricesServlet</servlet-name>
+        <url-pattern>/SavePricesServlet</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.jsp</welcome-file>

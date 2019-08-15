@@ -4,6 +4,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
@@ -372,6 +373,39 @@ public class databaseAccess {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+    }
+    
+    public void importAiports(int id, String icao, String type, String name, int elevation, String iata) {
+    	if (!dbInit) {
+    		initDB();
+    	}
+    	try {
+			PreparedStatement importAirports = connect.prepareStatement("insert into airports (id,icao,type,name,elevation,iata) values (?,?,?,?,?,?)");
+			importAirports.setInt(1, id);
+			importAirports.setString(2, icao);
+			importAirports.setString(3, type);
+			importAirports.setString(4, name);
+			importAirports.setInt(5, elevation);
+			importAirports.setString(6, iata);
+			importAirports.executeUpdate();
+		} catch (SQLException e) {
+			if (e instanceof SQLIntegrityConstraintViolationException) {
+				PreparedStatement updateAirports;
+				try {
+					updateAirports = connect.prepareStatement("update airports set icao = ?, type = ?, name = ?, elevation = ?, iata = ? where id = ?");
+					updateAirports.setString(1, icao);
+					updateAirports.setString(2, type);
+					updateAirports.setString(3, name);
+					updateAirports.setInt(4, elevation);
+					updateAirports.setString(5, iata);
+					updateAirports.setInt(6, id);
+					updateAirports.executeUpdate();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}				
+			}
 		}
     }
     
