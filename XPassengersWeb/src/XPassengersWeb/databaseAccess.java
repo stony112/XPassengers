@@ -116,6 +116,29 @@ public class databaseAccess {
 		return planeConfig;
 	}
     
+    public void createNewFlight(String from, String to, int cargo, int fuel, int airplaneID, int first, int business, int economy) {
+    	if (!dbInit) {
+    		initDB();
+    	}
+    	try {
+			PreparedStatement createFlight = connect.prepareStatement("insert into flights (from, to, pilotid, airlineid, cargo, fuel, airplaneid, firstclass, businessclass, economyclass) values (?,?,?,?,?,?,?,?,?,?)");
+			createFlight.setString(1, from);
+			createFlight.setString(2, to);
+			createFlight.setInt(3, utils.getActivePilot());
+			createFlight.setInt(4, utils.getActiveAirline());
+			createFlight.setInt(5, cargo);
+			createFlight.setInt(6, fuel);
+			createFlight.setInt(7, airplaneID);
+			createFlight.setInt(8, first);
+			createFlight.setInt(9, business);
+			createFlight.setInt(10, economy);
+			createFlight.executeUpdate();
+    	} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
     public void createAirline(String name, String homebase, String iata) throws SQLException {
     	if (!dbInit) {
     		initDB();

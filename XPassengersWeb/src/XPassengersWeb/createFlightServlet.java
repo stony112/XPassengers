@@ -119,6 +119,7 @@ public class createFlightServlet extends HttpServlet  {
 			utils.ini.put("flight", "cargo", (int) useableWeight + cargo);
 			utils.ini.put("flight","valueableCargo", (int) valueablePassCargo + useableWeight);
 			utils.ini.put("flight","overloaded", overloaded);
+			dao.createNewFlight(start, dest, cargo, fuel, pID, usedFirst, usedBusiness, usedEconomy);
 			utils.redirect(request, response);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
