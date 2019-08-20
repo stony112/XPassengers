@@ -121,7 +121,7 @@ public class databaseAccess {
     		initDB();
     	}
     	try {
-			PreparedStatement createFlight = connect.prepareStatement("insert into flights (from, to, pilotid, airlineid, cargo, fuel, airplaneid, firstclass, businessclass, economyclass) values (?,?,?,?,?,?,?,?,?,?)");
+			PreparedStatement createFlight = connect.prepareStatement("insert into flights (fromICAO, toICAO, pilotid, airlineid, cargo, fuel, airplaneid, firstclass, businessclass, economyclass) values (?,?,?,?,?,?,?,?,?,?)");
 			createFlight.setString(1, from);
 			createFlight.setString(2, to);
 			createFlight.setInt(3, utils.getActivePilot());
@@ -138,6 +138,23 @@ public class databaseAccess {
 			e.printStackTrace();
 		}
     }
+    
+    public void endFlight(int id, float flighthours, int points, float distance) {
+    	if (!dbInit) {
+    		initDB();
+    	}
+    	try {
+			PreparedStatement createFlight = connect.prepareStatement("update flights set flighthours=?, points=?, distance=? where id=?");
+			createFlight.setFloat(1, flighthours);
+			createFlight.setInt(2, points);
+			createFlight.setFloat(3, distance);
+			createFlight.setInt(4, id);
+			createFlight.executeUpdate();
+    	} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
     
     public void createAirline(String name, String homebase, String iata) throws SQLException {
     	if (!dbInit) {
@@ -468,5 +485,7 @@ public class databaseAccess {
 
         }
     }
+
+	
 }
 
