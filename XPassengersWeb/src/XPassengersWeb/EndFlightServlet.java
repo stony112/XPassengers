@@ -31,15 +31,12 @@ public class EndFlightServlet extends HttpServlet {
 			double priceEconomy = airlineDetails.getDouble("priceEconomy");
 			double priceCargo = airlineDetails.getDouble("priceCargo");
 			int pilotID = flightDetails.getInt("pilotID");
-			ResultSet pilotDetails = dao.getSingleContent("*", "pilots", pilotID);
-			int pilotPoints = pilotDetails.getInt("points");
-			int pilotFlighthours = pilotDetails.getInt("flighthours");
-			pilotPoints = pilotPoints + points;
-			pilotFlighthours = (int) (pilotFlighthours + flighthours);
 			double valueableDistance = distance/1000/100;
 			gain = ((valueableCargo * priceCargo * valueableDistance) + (valueableDistance * priceFirst * first) + (valueableDistance * priceBusiness * business) + (valueableDistance * priceEconomy * economy));
 			double balance = dao.getSingleContent("balance", "airlines", activeAirline).getDouble("balance");
+			flighthours = flighthours/60;
 			dao.endFlight(id,flighthours,points,distance,gain);
+			dao.updatePilot(pilotID, points, flighthours);
 			dao.updateBalance(balance + gain);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

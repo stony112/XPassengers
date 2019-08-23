@@ -247,15 +247,18 @@ public class databaseAccess {
     	createPilot.executeUpdate();
     }
     
-    public void updatePilotPoints(int pilot, int points) {
+    public void updatePilot(int pilot, int points, float flighthours) {
     	try {
     		if (!dbInit) {
         		initDB();
         	}
-			int current = getSingleContent("*", "pilots", pilot).getInt("points");
-			PreparedStatement updatePilot = connect.prepareStatement("update pilots set points = ? where id = ?");
-			updatePilot.setInt(1, current + points);
-			updatePilot.setInt(2, pilot);
+			ResultSet curPilot = getSingleContent("*", "pilots", pilot);
+			int curPoints = curPilot.getInt("points");
+			float curFlighthours = curPilot.getFloat("flighthours");
+			PreparedStatement updatePilot = connect.prepareStatement("update pilots set points = ?, flighthours = ? where id = ?");
+			updatePilot.setInt(1, curPoints + points);
+			updatePilot.setFloat(2, curFlighthours + flighthours);
+			updatePilot.setInt(3, pilot);
 			updatePilot.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
