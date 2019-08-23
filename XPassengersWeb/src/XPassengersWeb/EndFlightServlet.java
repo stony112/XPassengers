@@ -17,10 +17,6 @@ public class EndFlightServlet extends HttpServlet {
 		float flighthours = Float.parseFloat(request.getParameter("flighthours"));
 		int points = Integer.parseInt(request.getParameter("points"));
 		float distance = Float.parseFloat(request.getParameter("distance"));
-		System.out.println(id);
-		System.out.println(flighthours);
-		System.out.println(points);
-		System.out.println(distance);
 		double gain = 0;
 		try {
 			ResultSet flightDetails = dao.getSingleContent("*", "flights", id);
