@@ -57,23 +57,7 @@ public class XPassengers extends JFrame {
 		});
 		mnAirlines.add(mntmNewAirline);
 
-		
-		JMenuItem mntmPrices = new JMenuItem("Prices");
-		mntmPrices.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				EditPrices editPrices;
-				try {
-					editPrices = new EditPrices();
-					editPrices.setVisible(true);
-				} catch (ClassNotFoundException | SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-			}
-		});
-		mnAirlines.add(mntmPrices);
-		
+			
 		JMenu mnPilots = new JMenu("Pilots");
 		menuBar.add(mnPilots);
 		
@@ -118,23 +102,7 @@ public class XPassengers extends JFrame {
 		
 		JMenu mnFlights = new JMenu("Flights");
 		menuBar.add(mnFlights);
-		
-		JMenuItem mntmPlanNewFlight = new JMenuItem("Plan new Flight");
-		mntmPlanNewFlight.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				PlanNewFlight planNewFlight; 
-				try {
-					planNewFlight = new PlanNewFlight();
-					planNewFlight.setVisible(true);
-				} catch (ClassNotFoundException | FileNotFoundException | SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				
-			}
-		});
-		mnFlights.add(mntmPlanNewFlight);
-		
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
 		
