@@ -116,12 +116,12 @@ public class databaseAccess {
 		return planeConfig;
 	}
     
-    public void createNewFlight(String from, String to, int cargo, int fuel, int airplaneID, int first, int business, int economy) {
+    public long createNewFlight(String from, String to, int cargo, int fuel, int airplaneID, int first, int business, int economy, int valueableCargo) {
     	if (!dbInit) {
     		initDB();
     	}
     	try {
-			PreparedStatement createFlight = connect.prepareStatement("insert into flights (fromICAO, toICAO, pilotid, airlineid, cargo, fuel, airplaneid, firstclass, businessclass, economyclass) values (?,?,?,?,?,?,?,?,?,?)");
+			PreparedStatement createFlight = connect.prepareStatement("insert into flights (fromICAO, toICAO, pilotid, airlineid, cargo, fuel, airplaneid, firstclass, businessclass, economyclass, valueableCargo, date) values (?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			createFlight.setString(1, from);
 			createFlight.setString(2, to);
 			createFlight.setInt(3, utils.getActivePilot());
@@ -132,24 +132,32 @@ public class databaseAccess {
 			createFlight.setInt(8, first);
 			createFlight.setInt(9, business);
 			createFlight.setInt(10, economy);
+			createFlight.setInt(11, valueableCargo);
+			createFlight.setDate(12, utils.getSQLTodaysDate());
 			createFlight.executeUpdate();
+			ResultSet generatedKeys = createFlight.getGeneratedKeys();
+            if (generatedKeys.next()) {
+               return generatedKeys.getLong(1);
+            }
     	} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return 0;
     }
     
-    public void endFlight(int id, float flighthours, int points, float distance) {
+    public void endFlight(int id, float flighthours, int points, float distance, double gain) {
     	if (!dbInit) {
     		initDB();
     	}
     	try {
-			PreparedStatement createFlight = connect.prepareStatement("update flights set flighthours=?, points=?, distance=? where id=?");
-			createFlight.setFloat(1, flighthours);
-			createFlight.setInt(2, points);
-			createFlight.setFloat(3, distance);
-			createFlight.setInt(4, id);
-			createFlight.executeUpdate();
+			PreparedStatement endFlight = connect.prepareStatement("update flights set flighthours=?, points=?, distance=?, gain=? where id=?");
+			endFlight.setFloat(1, flighthours);
+			endFlight.setInt(2, points);
+			endFlight.setFloat(3, distance);
+			endFlight.setDouble(4, gain);
+			endFlight.setInt(5, id);
+			endFlight.executeUpdate();
     	} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -237,6 +245,24 @@ public class databaseAccess {
     	createPilot.setDate(3, birthday);
     	createPilot.setInt(4, airline);
     	createPilot.executeUpdate();
+    }
+    
+    public void updatePilotPoints(int pilot, int points) {
+    	try {
+    		if (!dbInit) {
+        		initDB();
+        	}
+			int current = getSingleContent("*", "pilots", pilot).getInt("points");
+			PreparedStatement updatePilot = connect.prepareStatement("update pilots set points = ? where id = ?");
+			updatePilot.setInt(1, current + points);
+			updatePilot.setInt(2, pilot);
+			updatePilot.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
     }
     
     public void createAirplane(String name, double toweight, double fuel, double emptyweight, String path, int eng, int prop, float price, int seats, String fuelType) throws SQLException {

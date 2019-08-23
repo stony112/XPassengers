@@ -115,11 +115,12 @@ public class createFlightServlet extends HttpServlet  {
 			}
 			
 			useableWeight = useableWeight + fuel;
-			
+			int valueableCargo = (int) (valueablePassCargo + useableWeight);
 			utils.ini.put("flight", "cargo", (int) useableWeight + cargo);
-			utils.ini.put("flight","valueableCargo", (int) valueablePassCargo + useableWeight);
+			utils.ini.put("flight","valueableCargo", valueableCargo);
 			utils.ini.put("flight","overloaded", overloaded);
-			dao.createNewFlight(start, dest, cargo, fuel, pID, usedFirst, usedBusiness, usedEconomy);
+			long id = dao.createNewFlight(start, dest, cargo, fuel, pID, usedFirst, usedBusiness, usedEconomy, valueableCargo);
+			utils.ini.put("flight","ID", id);
 			utils.redirect(request, response);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block

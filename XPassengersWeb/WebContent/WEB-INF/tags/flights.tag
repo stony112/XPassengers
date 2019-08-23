@@ -11,8 +11,8 @@ while (flights.next()) {
 	%> 
 	<div class="xp_flightSnippet">
 		<span><%= flights.getInt("id") %></span>
-		<span><%= flights.getString("from") %></span>
-		<span><%= flights.getString("to") %></span>
+		<span><%= flights.getString("fromICAO") %></span>
+		<span><%= flights.getString("toICAO") %></span>
 		<span><%= flights.getInt("points") %></span>
 		<span><%= flights.getDouble("gain") %></span>
 	</div>
