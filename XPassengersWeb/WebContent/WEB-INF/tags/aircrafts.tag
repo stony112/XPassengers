@@ -52,9 +52,6 @@
 							<div>
 								<span class="xp_aircraftInfoName">Fuel-Quantity:</span><span class="xp_aircraftInfoValue"><%= fuelquantity %> (<%= Math.ceil(pec) %> %)</span>
 							</div>
-							<div>
-								<span class="xp_aircraftInfoName">Fuel-Type:</span><span class="xp_aircraftInfoValue"><%= airplanes.getString("fuelType") %></span>
-							</div>
 							<div class="xp_seatconfig">
 								<div>
 									<span class="xp_aircraftInfoName">Max-Seats:</span><span class="xp_aircraftInfoValue"><%= airplanes.getInt("seats") %></span>

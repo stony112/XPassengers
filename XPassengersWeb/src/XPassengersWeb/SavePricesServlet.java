@@ -1,12 +1,15 @@
 package XPassengersWeb;
 
-import java.sql.SQLException;
-
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class SavePricesServlet extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8373675648464245720L;
+
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		

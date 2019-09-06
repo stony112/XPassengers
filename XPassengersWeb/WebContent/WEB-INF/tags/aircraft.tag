@@ -16,7 +16,9 @@
 	double relEcoBusni = utils.relEcoBusni;
 	double relBusniFirst = utils.relBusniFirst;
 	int fuelquantity = aircraft.getInt("fuelquantity");
-	String fuelType = aircraftDetail.getString("fuelType");
+	int engType = aircraftDetail.getInt("engType");
+	System.out.println(engType);
+	String fuelType = dao.getSingleContent("*", "enginetypes", engType).getString("fuelType");
 	int fuelWeight = aircraftDetail.getInt("fuel");
 	double fuelAvailable = 0;
 	if (fuelType.equals(utils.avgas)) {

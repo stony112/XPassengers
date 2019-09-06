@@ -2,12 +2,18 @@ package XPassengersWeb;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class EndFlightServlet extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6617240182175724472L;
+
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		databaseAccess dao = new databaseAccess();
@@ -17,6 +23,8 @@ public class EndFlightServlet extends HttpServlet {
 		float flighthours = Float.parseFloat(request.getParameter("flighthours"));
 		int points = Integer.parseInt(request.getParameter("points"));
 		float distance = Float.parseFloat(request.getParameter("distance"));
+		double fuelquantity = Double.parseDouble(request.getParameter("curFuel"));
+		String destination = request.getParameter("destination");
 		double gain = 0;
 		try {
 			ResultSet flightDetails = dao.getSingleContent("*", "flights", id);
@@ -31,12 +39,37 @@ public class EndFlightServlet extends HttpServlet {
 			double priceEconomy = airlineDetails.getDouble("priceEconomy");
 			double priceCargo = airlineDetails.getDouble("priceCargo");
 			int pilotID = flightDetails.getInt("pilotID");
+			int planeID = flightDetails.getInt("airplaneid");
 			double valueableDistance = distance/1000/100;
 			gain = ((valueableCargo * priceCargo * valueableDistance) + (valueableDistance * priceFirst * first) + (valueableDistance * priceBusiness * business) + (valueableDistance * priceEconomy * economy));
 			double balance = dao.getSingleContent("balance", "airlines", activeAirline).getDouble("balance");
 			flighthours = flighthours/60;
+			ResultSet curPilot = dao.getSingleContent("*", "pilots", pilotID);
+			int curPoints = curPilot.getInt("points");
+			float curFlighthours = curPilot.getFloat("flighthours");
+			int newPoints = curPoints + points;
+			float newFlighthours = curFlighthours + flighthours;
+			HashMap<String, Object> updateMap = new HashMap<String, Object>();
+			updateMap.put("points", newPoints);
+			updateMap.put("flighthours", newFlighthours);
+			int newLicense = dao.checkLicense(curPilot.getInt("licenseID"),newPoints,newFlighthours);
+			if (newLicense != -1) {
+				updateMap.put("licenseID", newLicense);
+			}
+			dao.update("pilots", updateMap, pilotID);
+			updateMap.clear();
+			ResultSet curAirplane = dao.getAirlinesAirplanesPlaneData(airlineID, planeID);
+			int planeHours = curAirplane.getInt("flighthours");
+			planeHours = (int) (planeHours + flighthours);
+			updateMap.put("flighthours", planeHours);
+			updateMap.put("lastflight", utils.getSQLTodaysDate());
+			updateMap.put("lastposition", destination);
+			updateMap.put("fuelquantity", fuelquantity*utils.toLbs);
+			HashMap<String, Object> wheres = new HashMap<String, Object>();
+			wheres.put("airlineid", activeAirline);
+			wheres.put("airplaneid", planeID);
+			dao.update("airlines_airplanes", updateMap, wheres);
 			dao.endFlight(id,flighthours,points,distance,gain);
-			dao.updatePilot(pilotID, points, flighthours);
 			dao.updateBalance(balance + gain);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

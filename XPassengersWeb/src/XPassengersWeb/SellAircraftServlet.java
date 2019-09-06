@@ -1,6 +1,5 @@
 package XPassengersWeb;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpServlet;
@@ -8,6 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class SellAircraftServlet extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7461925385781412331L;
+
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		

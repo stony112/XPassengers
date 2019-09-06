@@ -8,6 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class BuyFuelServlet extends HttpServlet {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5526101245900048843L;
+
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		

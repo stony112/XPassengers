@@ -2,18 +2,20 @@ package XPassengersWeb;
 
 import javax.servlet.http.HttpServlet;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
+import java.util.HashMap;
 
 import javax.servlet.http.*;
 
 public class createPilotServlet extends HttpServlet{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -978547270865542264L;
+
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		
@@ -32,9 +34,17 @@ public class createPilotServlet extends HttpServlet{
 		Calendar c = Calendar.getInstance();
 		try {
 			c.setTime(formatBirthday.parse(birthday));
-			c.add(Calendar.DAY_OF_MONTH,1);
-			dao.createPilot(firstname, lastname, utils.getSQLDate(c.getTime()), Integer.parseInt(airline));
-		} catch (ParseException | NumberFormatException | SQLException e) {
+			//dao.createPilot(firstname, lastname, utils.getSQLDate(c.getTime()), Integer.parseInt(airline));
+			HashMap<String, Object> insertMap = new HashMap<String, Object>();
+			insertMap.put("firstname", firstname);
+			insertMap.put("lastname", lastname);
+			insertMap.put("birthday", utils.getSQLDate(c.getTime()));
+			insertMap.put("airlineID", Integer.parseInt(airline));
+			insertMap.put("licenseID", 1);
+			insertMap.put("flighthours", 0);
+			insertMap.put("points", 0);
+			dao.insert("pilots", insertMap);
+		} catch (ParseException | NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

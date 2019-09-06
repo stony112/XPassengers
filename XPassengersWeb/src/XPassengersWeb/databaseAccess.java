@@ -6,11 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
-
-import javax.swing.JOptionPane;
 
 public class databaseAccess {
     private Connection connect = null;
@@ -52,6 +49,128 @@ public class databaseAccess {
     	return null;
     }
     
+    public void insertSQLSet(HashMap<String, Object> map, StringBuilder builder) {
+    	builder.append(" set ");
+    	int counter = 1;
+    	int mapSize = map.size();
+    	for (String i : map.keySet()) {
+    		builder.append(i);
+    		builder.append("=");
+    		Object value = map.get(i);
+    		if (value instanceof String) {
+    			builder.append("'");
+    			builder.append(value);
+    			builder.append("'");
+    		} else if (value instanceof java.sql.Date) {
+    			builder.append("STR_TO_DATE('");
+    			builder.append(value);
+    			builder.append("', '%Y-%m-%d')");
+    		} else {
+    			builder.append(value);
+    		}
+    		if (counter < mapSize) {
+    			builder.append(", ");
+    		}
+    		counter++;
+    	}
+    }
+    
+    public void insertSQLWhere(HashMap<String, Object> map, StringBuilder builder) {
+    	builder.append(" where ");
+    	int counter = 1;
+    	int mapSize = map.size();
+    	for(String i : map.keySet()) {
+    		builder.append(i);
+    		builder.append("=");
+    		builder.append(map.get(i));
+    		if (counter < mapSize) {
+        		builder.append(" and ");
+        	}
+    		counter++;
+    	}    	
+    	
+    }
+    
+    public ResultSet select(String table, String columns, HashMap<String, Object> wheres) {
+    	if (!dbInit) {
+    		initDB();
+    	}
+    	StringBuilder selectStatement = new StringBuilder();
+    	selectStatement.append("select ");
+    	selectStatement.append(columns);
+    	selectStatement.append(" from ");
+    	selectStatement.append(table);
+    	insertSQLWhere(wheres, selectStatement);
+    	Statement get;
+		try {
+			get = connect.createStatement();
+			ResultSet results = get.executeQuery(selectStatement.toString());
+	    	if (results != null) {
+	    		return results;
+	    	}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    	
+    	return null;
+    }
+    
+    public void update(String table, HashMap<String, Object> values, int id) {
+    	if (!dbInit) {
+    		initDB();
+    	}
+    	StringBuilder updateStatement = new StringBuilder();
+    	updateStatement.append("update ");
+    	updateStatement.append(table);
+    	insertSQLSet(values, updateStatement);
+    	updateStatement.append(" where id = ");
+    	updateStatement.append(id);
+    	PreparedStatement update;
+		try {
+			update = connect.prepareStatement(updateStatement.toString());
+			update.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    
+    public void update(String table, HashMap <String, Object> values, HashMap<String, Object> wheres) {
+    	StringBuilder updateStatement = new StringBuilder();
+    	updateStatement.append("update ");
+    	updateStatement.append(table);
+    	insertSQLSet(values, updateStatement);
+    	insertSQLWhere(wheres, updateStatement);
+    	PreparedStatement update;
+    	try {
+    		update = connect.prepareStatement(updateStatement.toString());
+    		update.executeUpdate();
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    public void insert(String table, HashMap<String, Object> values) {
+    	if (!dbInit) {
+    		initDB();
+    	}
+    	StringBuilder updateStatement = new StringBuilder();
+    	updateStatement.append("insert into ");
+    	updateStatement.append(table);
+    	insertSQLSet(values, updateStatement);
+    	PreparedStatement update;
+		try {
+			System.out.println(updateStatement.toString());
+			update = connect.prepareStatement(updateStatement.toString());
+			update.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    
     public ResultSet getAirlinesAirplanesData(String columns, int airlineid) {
     	if (!dbInit) {
     		initDB();
@@ -88,11 +207,12 @@ public class databaseAccess {
     		initDB();
     	}
 		ResultSet result = getAirlinesAirplanesPlaneData(airline,airplane);
-		ResultSet planeData = getSingleContent("emptyweight,toweight,fuel,fuelType", "airplanes", airplane);
+		ResultSet planeData = getSingleContent("emptyweight,toweight,fuel,engType", "airplanes", airplane);
 		double toweight = planeData.getDouble("toweight");
 		double emptyweight = planeData.getDouble("emptyweight");
 		double maxFuel = planeData.getDouble("fuel");
-		String fuelType = planeData.getString("fuelType");
+		ResultSet engData = getSingleContent("fueltype", "enginetypes", planeData.getInt("engType"));
+		String fuelType = engData.getString("fueltype");
 		double useableweight = toweight - emptyweight;
 		
 		int first = result.getInt("first");
@@ -235,44 +355,31 @@ public class databaseAccess {
     	return getLastFuelprice(type);
     }
     
-    public void createPilot(String firstname, String lastname, java.sql.Date birthday, int airline) throws SQLException {
+   
+    
+    public int checkLicense(int curLicense, int points, float flighthours) {
     	if (!dbInit) {
     		initDB();
     	}
-    	PreparedStatement createPilot = connect.prepareStatement("insert into pilots (firstname,lastname,birthday,airlineid) values (?,?,?,?)");
-    	createPilot.setString(1, firstname);
-    	createPilot.setString(2, lastname);
-    	createPilot.setDate(3, birthday);
-    	createPilot.setInt(4, airline);
-    	createPilot.executeUpdate();
-    }
-    
-    public void updatePilot(int pilot, int points, float flighthours) {
+    	int license = -1;
     	try {
-    		if (!dbInit) {
-        		initDB();
-        	}
-			ResultSet curPilot = getSingleContent("*", "pilots", pilot);
-			int curPoints = curPilot.getInt("points");
-			float curFlighthours = curPilot.getFloat("flighthours");
-			PreparedStatement updatePilot = connect.prepareStatement("update pilots set points = ?, flighthours = ? where id = ?");
-			updatePilot.setInt(1, curPoints + points);
-			updatePilot.setFloat(2, curFlighthours + flighthours);
-			updatePilot.setInt(3, pilot);
-			updatePilot.executeUpdate();
+			ResultSet newLicense = getSingleContent("*", "licenses", curLicense + 1);
+			if (newLicense.getFloat("hours") > flighthours) {
+				return newLicense.getInt("id");
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
-    	
+    	return license;
     }
     
-    public void createAirplane(String name, double toweight, double fuel, double emptyweight, String path, int eng, int prop, float price, int seats, String fuelType) throws SQLException {
+    public void createAirplane(String name, double toweight, double fuel, double emptyweight, String path, int eng, int prop, float price, int seats, int engType, int minLicense) throws SQLException {
     	if (!dbInit) {
     		initDB();
     	}
-    	PreparedStatement createAirplane = connect.prepareStatement("insert into airplanes(name,toweight,fuel,emptyweight,path,engines,props,price,seats,fuelType) values (?,?,?,?,?,?,?,?,?,?)"); 
+    	PreparedStatement createAirplane = connect.prepareStatement("insert into airplanes(name,toweight,fuel,emptyweight,path,engines,props,price,seats,engType,minLicense) values (?,?,?,?,?,?,?,?,?,?,?)"); 
     	createAirplane.setString(1, name);
     	createAirplane.setDouble(2, toweight);
     	createAirplane.setDouble(3, fuel);
@@ -282,7 +389,8 @@ public class databaseAccess {
     	createAirplane.setInt(7, prop);
     	createAirplane.setFloat(8, price);
     	createAirplane.setInt(9, seats);
-    	createAirplane.setString(10,fuelType);
+    	createAirplane.setInt(10,engType);
+    	createAirplane.setInt(11,minLicense);
     	createAirplane.executeUpdate();
     }
     
@@ -496,7 +604,6 @@ public class databaseAccess {
     	return 0;   	
     }
 
-    // You need to close the resultSet
     private void close() {
         try {
             if (resultSet != null) {

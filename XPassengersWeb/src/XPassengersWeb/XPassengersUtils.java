@@ -3,14 +3,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.RoundingMode;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -216,8 +217,9 @@ public class XPassengersUtils {
 		String airplaneACFName;
 		int counter = 0, seats = 0;
 		Double maxFuel = (double) 0,toWeight = (double) 0,emptyWeight = (double) 0;
+		float green_hi_N1 = 0;
 		float price;
-		int eng = 0, prop = 0;
+		int eng = 0, prop = 0, engType = 0, minLicense = 1;
 		String xplanePath = ini.get("options","xplanePath");
 		File aircraftFolder = new File(xplanePath + "/Aircraft");
 		for (final File subdirectories : aircraftFolder.listFiles()) {
@@ -237,6 +239,7 @@ public class XPassengersUtils {
 							airplaneName = airplaneACFName.replace(".acf", "");
 							if (!(availableNames.contains(airplaneName) && availablePaths.contains(airplanePath))) {
 								final Scanner scanner = new Scanner(aircraftACF);
+								System.out.println(airplaneName);
 								while (scanner.hasNextLine()) {
 									final String lineFromFile = scanner.nextLine();
 									if (lineFromFile.contains("acf/_m_fuel_max_tot")) {
@@ -249,19 +252,41 @@ public class XPassengersUtils {
 										eng = Integer.parseInt(lineFromFile.replace("P acf/_num_engn ", ""));
 									} else if (lineFromFile.contains("acf/_num_prop")) {
 										prop = Integer.parseInt(lineFromFile.replace("P acf/_num_prop ", ""));
+									} else if (lineFromFile.contains("acf/_green_hi_N1 ")) {
+										green_hi_N1 = Float.parseFloat(lineFromFile.replace("P acf/_green_hi_N1 ", ""));
 									}
 								}
 								counter++;
 								scanner.close();
 								price = getPrice(eng,prop,toWeight);
 								seats = getSeats(airplaneName);
-								String fuelType;
 								if (eng == prop) {
-									fuelType = avgas;
+									if (green_hi_N1 > 0) {
+										engType = 2;
+									} else {
+										engType = 1;
+									}										
 								} else {
-									fuelType = jetA1;
+									engType = 3;
 								}
-								dao.createAirplane(airplaneName, toWeight, maxFuel, emptyWeight, airplanePath, eng, prop, price, seats, fuelType);
+								
+								if (engType == 1 && eng == 1 && emptyWeight/toLbs <= 1500) {
+									minLicense = 1;
+								} else if (engType == 1 && eng > 1 && emptyWeight/toLbs <= 2500) {
+									minLicense = 4;
+								} else if (engType <= 2 && emptyWeight/toLbs <= 12000) {
+									minLicense = 5;
+								} else if (engType <= 3 && emptyWeight/toLbs <= 20000) {
+									minLicense = 7;
+								} else if (engType <= 3 && emptyWeight/toLbs <= 40000) {
+									minLicense = 8;
+								} else if (engType <= 3 && emptyWeight/toLbs <= 80000) {
+									minLicense = 10;
+								} else {
+									minLicense = 11;
+								}
+								
+								dao.createAirplane(airplaneName, toWeight, maxFuel, emptyWeight, airplanePath, eng, prop, price, seats, engType, minLicense);
 							}
 						}
 					}
@@ -544,6 +569,29 @@ public class XPassengersUtils {
 		try {
 			response.sendRedirect(request.getHeader("referer"));
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void redirect(HttpServletRequest request, HttpServletResponse response, HashMap<String,String> parameter) {
+		try {
+			StringBuilder url = new StringBuilder();
+			String referer = new URI(request.getHeader("referer")).getPath();
+			url.append(referer);
+			int counter = 1;
+			for (String i : parameter.keySet()) {
+				if (counter == 1) {
+					url.append("?");
+				} else {
+					url.append("&");
+				}
+				url.append(i);
+				url.append("=");
+				url.append(parameter.get(i));
+			}
+			response.sendRedirect(url.toString());
+		} catch (IOException | URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

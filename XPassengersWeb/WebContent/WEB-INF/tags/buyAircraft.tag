@@ -25,9 +25,6 @@
 						<span class="xp_aircraftInfoName">Fuel-Weight:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("fuel") %></span>
 					</div>
 					<div>
-						<span class="xp_aircraftInfoName">Fuel-Type:</span><span class="xp_aircraftInfoValue"><%= airplanes.getString("fuelType") %></span>
-					</div>
-					<div>
 						<span class="xp_aircraftInfoName">Seats:</span><span class="xp_aircraftInfoValue"><%= airplanes.getDouble("seats") %></span>
 					</div>
 					<div>

@@ -1,10 +1,8 @@
 package XPassengersWeb;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLIntegrityConstraintViolationException;
 
 public class importAirports {
 
@@ -14,9 +12,7 @@ public class importAirports {
 			databaseAccess dao = new databaseAccess();
 			BufferedReader csvReader = new BufferedReader(new FileReader(filepath));
 			String row;
-			int counter = 0;
 			while ((row = csvReader.readLine()) != null) {
-				counter++;
 				row = row.replace("\"", "");
 				String[] data = row.split(",");
 				if (!data[0].equals("id")) {
@@ -53,7 +49,7 @@ public class importAirports {
 						}
 					}
 					dao.importAiports(id, icao, type, name, elevation, iata);
-					System.out.println(counter);
+					csvReader.close();
 				}
 			}
 		} catch (IOException e) {
