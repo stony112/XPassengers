@@ -43,7 +43,7 @@ public class EndFlightServlet extends HttpServlet {
 			double valueableDistance = distance/1000/100;
 			gain = ((valueableCargo * priceCargo * valueableDistance) + (valueableDistance * priceFirst * first) + (valueableDistance * priceBusiness * business) + (valueableDistance * priceEconomy * economy));
 			double balance = dao.getSingleContent("balance", "airlines", activeAirline).getDouble("balance");
-			flighthours = flighthours/60;
+			flighthours = flighthours/60/60;
 			ResultSet curPilot = dao.getSingleContent("*", "pilots", pilotID);
 			int curPoints = curPilot.getInt("points");
 			float curFlighthours = curPilot.getFloat("flighthours");
