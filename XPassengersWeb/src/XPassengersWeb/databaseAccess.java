@@ -363,10 +363,12 @@ public class databaseAccess {
     	}
     	int license = -1;
     	try {
-			ResultSet newLicense = getSingleContent("*", "licenses", curLicense + 1);
-			if (newLicense.getFloat("hours") < flighthours) {
-				return newLicense.getInt("id");
-			}
+    		if (curLicense < 24) {
+    			ResultSet newLicense = getSingleContent("*", "licenses", curLicense + 1);
+				if (newLicense.getFloat("hours") < flighthours) {
+					return newLicense.getInt("id");
+				}
+    		}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
