@@ -25,6 +25,9 @@ public class EndFlightServlet extends HttpServlet {
 		float distance = Float.parseFloat(request.getParameter("distance"));
 		double fuelquantity = Double.parseDouble(request.getParameter("curFuel"));
 		String destination = request.getParameter("destination");
+		int drinksServed = Integer.parseInt(request.getParameter("drinks"));
+		int coldFoodServed = Integer.parseInt(request.getParameter("coldfood"));
+		int hotFoodServed = Integer.parseInt(request.getParameter("hotfood"));
 		double gain = 0;
 		try {
 			ResultSet flightDetails = dao.getSingleContent("*", "flights", id);
@@ -38,10 +41,13 @@ public class EndFlightServlet extends HttpServlet {
 			double priceBusiness = airlineDetails.getDouble("priceBusiness");
 			double priceEconomy = airlineDetails.getDouble("priceEconomy");
 			double priceCargo = airlineDetails.getDouble("priceCargo");
+			double priceDrink = airlineDetails.getDouble("priceDrink");
+			double priceHotFood = airlineDetails.getDouble("priceHotFood");
+			double priceColdFood = airlineDetails.getDouble("priceColdFood");
 			int pilotID = flightDetails.getInt("pilotID");
 			int planeID = flightDetails.getInt("airplaneid");
 			double valueableDistance = distance/1000/100;
-			gain = ((valueableCargo * priceCargo * valueableDistance) + (valueableDistance * priceFirst * first) + (valueableDistance * priceBusiness * business) + (valueableDistance * priceEconomy * economy));
+			gain = ((valueableCargo * priceCargo * valueableDistance) + (valueableDistance * priceFirst * first) + (valueableDistance * priceBusiness * business) + (valueableDistance * priceEconomy * economy) + (drinksServed * priceDrink) + (coldFoodServed * priceColdFood) + (hotFoodServed * priceHotFood));
 			double balance = dao.getSingleContent("balance", "airlines", activeAirline).getDouble("balance");
 			flighthours = flighthours/60/60;
 			ResultSet curPilot = dao.getSingleContent("*", "pilots", pilotID);
