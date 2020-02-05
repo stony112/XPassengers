@@ -28,6 +28,7 @@ public class EndFlightServlet extends HttpServlet {
 		int drinksServed = Integer.parseInt(request.getParameter("drinks"));
 		int coldFoodServed = Integer.parseInt(request.getParameter("coldfood"));
 		int hotFoodServed = Integer.parseInt(request.getParameter("hotfood"));
+		int satisfaction = Integer.parseInt(reuqest.getParameter("satisfaction"));
 		double gain = 0;
 		try {
 			ResultSet flightDetails = dao.getSingleContent("*", "flights", id);
@@ -75,7 +76,7 @@ public class EndFlightServlet extends HttpServlet {
 			wheres.put("airlineid", activeAirline);
 			wheres.put("airplaneid", planeID);
 			dao.update("airlines_airplanes", updateMap, wheres);
-			dao.endFlight(id,flighthours,points,distance,gain);
+			dao.endFlight(id,flighthours,points,distance,gain,satisfaction);
 			dao.updateBalance(balance + gain);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

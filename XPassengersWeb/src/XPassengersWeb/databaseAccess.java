@@ -266,17 +266,18 @@ public class databaseAccess {
 		return 0;
     }
     
-    public void endFlight(int id, float flighthours, int points, float distance, double gain) {
+    public void endFlight(int id, float flighthours, int points, float distance, double gain, int satisfaction) {
     	if (!dbInit) {
     		initDB();
     	}
     	try {
-			PreparedStatement endFlight = connect.prepareStatement("update flights set flighthours=?, points=?, distance=?, gain=? where id=?");
+			PreparedStatement endFlight = connect.prepareStatement("update flights set flighthours=?, points=?, distance=?, gain=?, satisfaction=? where id=?");
 			endFlight.setFloat(1, flighthours);
 			endFlight.setInt(2, points);
 			endFlight.setFloat(3, distance);
 			endFlight.setDouble(4, gain);
-			endFlight.setInt(5, id);
+			endFlight.setInt(5, satisfaction);
+			endFlight.setInt(6, id);			
 			endFlight.executeUpdate();
     	} catch (SQLException e) {
 			// TODO Auto-generated catch block
