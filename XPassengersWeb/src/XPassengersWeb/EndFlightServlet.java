@@ -28,7 +28,8 @@ public class EndFlightServlet extends HttpServlet {
 		int drinksServed = Integer.parseInt(request.getParameter("drinks"));
 		int coldFoodServed = Integer.parseInt(request.getParameter("coldfood"));
 		int hotFoodServed = Integer.parseInt(request.getParameter("hotfood"));
-		int satisfaction = Integer.parseInt(reuqest.getParameter("satisfaction"));
+		int satisfaction = Integer.parseInt(request.getParameter("satisfaction"));
+		String emergency = request.getParameter("emergency");
 		double gain = 0;
 		try {
 			ResultSet flightDetails = dao.getSingleContent("*", "flights", id);
