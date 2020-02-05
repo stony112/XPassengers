@@ -42,6 +42,41 @@ public class XPassengersUtils {
 	final static double freeMax = 50;
 	Wini ini;
 	
+	public static Map<String, Integer> seatMapping;
+	static {
+		seatMapping = new HashMap<>();
+		seatMapping.put("ASK21", 1);
+		seatMapping.put("L5_Sentinel", 1);
+		seatMapping.put("DR401", 3);
+		seatMapping.put("Cessna_172", 3);
+		seatMapping.put("c400", 3);
+		seatMapping.put("Orbiter", 5);
+		seatMapping.put("Baron_58", 5);
+		seatMapping.put("CirrusSF50", 6);
+		seatMapping.put("C90B", 6);
+		seatMapping.put("S-76", 12);
+		seatMapping.put("DC-3", 32);
+		seatMapping.put("E-170", 80);
+		seatMapping.put("E-195", 126);
+		seatMapping.put("B733", 150);
+		seatMapping.put("A320", 150);
+		seatMapping.put("a319", 156);
+		seatMapping.put("MD80", 172);
+		seatMapping.put("b738", 189);
+		seatMapping.put("b739", 189);
+		seatMapping.put("737", 189);
+		seatMapping.put("757-200", 239);
+		seatMapping.put("767-200", 290);
+		seatMapping.put("757-300", 295);
+		seatMapping.put("787", 335);
+		seatMapping.put("767-300", 351);
+		seatMapping.put("a330", 440);
+		seatMapping.put("A350", 440);
+		seatMapping.put("747-100", 550);
+		seatMapping.put("B748", 605);
+		seatMapping.put("747-400", 660);
+	}
+
 	public void setIni() {
 		File configIni;
 		try {
@@ -259,7 +294,7 @@ public class XPassengersUtils {
 								counter++;
 								scanner.close();
 								price = getPrice(eng,prop,toWeight);
-								seats = getSeats(airplaneName);
+								seats = seatsMapping.get(airplaneName);
 								if (eng == prop) {
 									if (green_hi_N1 > 0) {
 										engType = 2;
@@ -365,55 +400,7 @@ public class XPassengersUtils {
 		float price = (float) (min + (Math.random() * (max - min) + 1)); 
 		return price;
 	}
-	
-	public int getSeats(String a) {
-		int seats = 0;
-		if (a.contains("ASK21") || a.contains("L5_Sentinel")) {
-			seats = 1;
-		} else if (a.contains("DR401") || a.contains("Cessna_172") || a.contains("c400")) {
-			seats = 3;
-		} else if (a.contains("Orbiter") || a.contains("Baron_58")) {
-			seats = 5;
-		} else if (a.contains("CirrusSF50") || a.contains("C90B")) {
-			seats = 6;
-		} else if (a.contains("S-76")) {
-			seats = 12;
-		} else if (a.contains("DC-3")) {
-			seats = 32;
-		} else if (a.contains("E-170")) {
-			seats = 80;
-		} else if (a.contains("E-195")) {
-			seats = 126;
-		} else if (a.contains("B733") || a.contains("A320")) {
-			seats = 150;
-		} else if (a.contains("a319")) {
-			seats = 156;
-		} else if (a.contains("MD80")) {
-			seats = 172;
-		} else if (a.contains("b738") || a.contains("b739") || a.contains("737")) {
-			seats = 189;
-		} else if (a.contains("757-200")) {
-			seats = 239;
-		} else if (a.contains("767-200")) {
-			seats = 290;
-		} else if (a.contains("757-300")) {
-			seats = 295;
-		} else if (a.contains("787")) {
-			seats = 335;
-		} else if (a.contains("767-300")) {
-			seats = 351;
-		} else if (a.contains("a330") || a.contains("A350")) {
-			seats = 440;
-		} else if (a.contains("747-100")) {
-			seats = 550;
-		} else if (a.contains("B748")) {
-			seats = 605;
-		} else if (a.contains("747-400")) {
-			seats = 660;
-		}
-		return seats;
-	}
-	
+
 	public void updateSliders(JSlider f, JSlider b, JLabel fc, JLabel bc, JLabel fcv, JLabel bcv, JTextPane textPane, int seats) {
 		changeVisible(b,bc,bcv,false);
 		changeVisible(f,fc,fcv,false);
