@@ -251,27 +251,29 @@ public class XPassengersUtils {
 		String airplaneName;
 		String airplaneACFName;
 		int counter = 0, seats = 0;
-		Double maxFuel = (double) 0,toWeight = (double) 0,emptyWeight = (double) 0;
+		double maxFuel = 0,toWeight = 0,emptyWeight = 0;
 		float green_hi_N1 = 0;
 		float price;
 		int eng = 0, prop = 0, engType = 0, minLicense = 1;
 		String xplanePath = ini.get("options","xplanePath");
 		File aircraftFolder = new File(xplanePath + "/Aircraft");
+		ResultSet availableAirplanes = dao.getResults("airplanes");
+		ArrayList<String> availableNames = new ArrayList<>();
+		ArrayList<String> availablePaths = new ArrayList<>();
+		while (availableAirplanes.next()) {
+			availableNames.add(availableAirplanes.getString("name"));
+			availablePaths.add(availableAirplanes.getString("path"));
+		}
 		for (final File subdirectories : aircraftFolder.listFiles()) {
 			if (subdirectories.isDirectory()) {
 				for (final File aircraft : subdirectories.listFiles()) {
 					airplanePath = aircraft.getAbsolutePath();
 					for (final File aircraftACF : aircraft.listFiles()) {
 						if (aircraftACF.getName().toLowerCase().endsWith(".acf")) {
-							ResultSet availableAirplanes = dao.getResults("airplanes");
-							ArrayList<String> availableNames = new ArrayList<>();
-							ArrayList<String> availablePaths = new ArrayList<>();
-							while (availableAirplanes.next()) {
-								availableNames.add(availableAirplanes.getString("name"));
-								availablePaths.add(availableAirplanes.getString("path"));
-							}
+							HashMap<String, Object> airplaneData = new Map<String, Object>();							
 							airplaneACFName = aircraftACF.getName();
 							airplaneName = airplaneACFName.replace(".acf", "");
+							airplaneData.put("name", airplaneName);
 							if (!(availableNames.contains(airplaneName) && availablePaths.contains(airplanePath))) {
 								final Scanner scanner = new Scanner(aircraftACF);
 								System.out.println(airplaneName);
@@ -320,8 +322,19 @@ public class XPassengersUtils {
 								} else {
 									minLicense = 11;
 								}
-								
-								dao.createAirplane(airplaneName, toWeight, maxFuel, emptyWeight, airplanePath, eng, prop, price, seats, engType, minLicense);
+								// name,toweight,fuel,emptyweight,path,engines,props,price,seats,engType,minLicense
+								airplaneData.put("toweight", toWeight);
+								airplaneData.put("fuel", maxFuel);
+								airplaneData.put("emptyweight", emptyWeight);
+								airplaneData.put("path", airplanePath);
+								airplaneData.put("enginges", eng);
+								airplaneData.put("props", prop);
+								airplaneData.put("price", price);
+								airplaneData.put("seats", seats);
+								airplaneData.put("engType", engType);
+								airplaneData.put("minLicense", minLicense);
+
+								dao.insert("airplanes", airplaneData);
 							}
 						}
 					}

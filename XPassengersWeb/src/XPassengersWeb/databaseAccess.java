@@ -378,25 +378,6 @@ public class databaseAccess {
     	return license;
     }
     
-    public void createAirplane(String name, double toweight, double fuel, double emptyweight, String path, int eng, int prop, float price, int seats, int engType, int minLicense) throws SQLException {
-    	if (!dbInit) {
-    		initDB();
-    	}
-    	PreparedStatement createAirplane = connect.prepareStatement("insert into airplanes(name,toweight,fuel,emptyweight,path,engines,props,price,seats,engType,minLicense) values (?,?,?,?,?,?,?,?,?,?,?)"); 
-    	createAirplane.setString(1, name);
-    	createAirplane.setDouble(2, toweight);
-    	createAirplane.setDouble(3, fuel);
-    	createAirplane.setDouble(4, emptyweight);
-    	createAirplane.setString(5, path);
-    	createAirplane.setInt(6, eng);
-    	createAirplane.setInt(7, prop);
-    	createAirplane.setFloat(8, price);
-    	createAirplane.setInt(9, seats);
-    	createAirplane.setInt(10,engType);
-    	createAirplane.setInt(11,minLicense);
-    	createAirplane.executeUpdate();
-    }
-    
     public void updatePlane(int activeAirline, int plane, int e, int b, int f) throws SQLException {
     	if (!dbInit) {
     		initDB();
