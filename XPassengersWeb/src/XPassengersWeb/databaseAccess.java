@@ -19,7 +19,7 @@ public class databaseAccess {
     public void initDB() {
     	try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			connect = DriverManager.getConnection("jdbc:mysql://localhost/xpassengers?" + "user=cs&password=Steppen3weihe&serverTimezone=UTC");
+			connect = DriverManager.getConnection("jdbc:mysql://localhost/xpassengers?" + "user=xpassengers&password=Steppen3weihe&serverTimezone=UTC");
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
