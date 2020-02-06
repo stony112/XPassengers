@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -270,7 +271,7 @@ public class XPassengersUtils {
 					airplanePath = aircraft.getAbsolutePath();
 					for (final File aircraftACF : aircraft.listFiles()) {
 						if (aircraftACF.getName().toLowerCase().endsWith(".acf")) {
-							HashMap<String, Object> airplaneData = new Map<String, Object>();							
+							HashMap<String, Object> airplaneData = new HashMap<String, Object>();							
 							airplaneACFName = aircraftACF.getName();
 							airplaneName = airplaneACFName.replace(".acf", "");
 							airplaneData.put("name", airplaneName);
@@ -296,7 +297,7 @@ public class XPassengersUtils {
 								counter++;
 								scanner.close();
 								price = getPrice(eng,prop,toWeight);
-								seats = seatsMapping.get(airplaneName);
+								seats = seatMapping.get(airplaneName);
 								if (eng == prop) {
 									if (green_hi_N1 > 0) {
 										engType = 2;
