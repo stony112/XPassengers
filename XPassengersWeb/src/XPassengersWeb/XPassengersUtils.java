@@ -414,35 +414,6 @@ public class XPassengersUtils {
 		float price = (float) (min + (Math.random() * (max - min) + 1)); 
 		return price;
 	}
-
-	public void updateSliders(JSlider f, JSlider b, JLabel fc, JLabel bc, JLabel fcv, JLabel bcv, JTextPane textPane, int seats) {
-		changeVisible(b,bc,bcv,false);
-		changeVisible(f,fc,fcv,false);
-		if (seats < 15) {
-			textPane.setText("Your aircraft is to small for Business- or First-Class-Seats (below max of 15 seats).\nYou are not able to change seatplan");
-		} else if (seats < 130) {
-			changeVisible(b,bc,bcv,true);
-			textPane.setText("Your aircraft is to small for First-Class (below max of 130 seats)");
-		} else {
-			changeVisible(b,bc,bcv,true);
-			changeVisible(f,fc,fcv,true);
-			textPane.setText("");
-		}
-		//b.setValue(0);
-		b.setMinimum(0);
-		int businessMax = (int) (seats/relEcoBusni);
-		b.setMaximum(businessMax);
-		//f.setValue(0);
-		int firstMax = (int) (seats/relEcoFirst);
-		f.setMinimum(0);
-		f.setMaximum(firstMax);
-	}
-	
-	public void changeVisible(JSlider slider, JLabel label, JLabel value, boolean visible) {
-		slider.setVisible(visible);
-		label.setVisible(visible);
-		value.setVisible(visible);
-	}
 	
 	public int getSeatConfig(int e, int b, int f, int seats, String changed) {
 		int remaining = 0;
@@ -459,31 +430,6 @@ public class XPassengersUtils {
 		//decimalFormat.applyLocalizedPattern(pattern);
 		String price = decimalFormat.format(number);
 		return price;
-	}
-	
-	public void changeSliderSpinner(JSlider slider, JSpinner spinner) {
-		slider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSlider source = (JSlider)e.getSource();
-				if (!source.getValueIsAdjusting()) {
-					int sliderValue = source.getValue();
-					spinner.setValue(sliderValue);
-				}
-			}
-		});
-	}
-	
-	public void changeSpinnerSlider(JSlider slider, JSpinner spinner, double sliderMax, JFrame jframe) {
-		spinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner source = (JSpinner)e.getSource();
-				int sliderValue = (int) source.getValue();
-				if (sliderValue > sliderMax) {
-					JOptionPane.showMessageDialog(jframe, "Over maximum: " + sliderMax,"Value too high", JOptionPane.ERROR_MESSAGE);
-				}
-				slider.setValue(sliderValue);
-			}
-		});
 	}
 
 	public double getSellingPrice(int quality, int flighthours, float newPrice) {
