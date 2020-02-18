@@ -91,6 +91,74 @@ public class databaseAccess {
     	
     }
     
+	public void createTable(HashMap<String, String> columns, String tablename) {
+		if (!dbInit) {
+    		initDB();
+    	}
+		int counter = 1;
+		int mapSize = columns.size();
+		StringBuilder createTable = new StringBuilder();
+		createTable.append("CREATE TABLE ");
+		createTable.append(tablename);
+		createTable.append(" id INT NOT NULL AUTO_INCREMENT, ");
+		for (String i : columns.keySet()) {
+			String value = columns.get(i);
+			createTable.append(i);
+			createTable.append(" ");
+			createTable.append(value);
+			if (counter < mapSize) {
+    			builder.append(", ");
+    		}
+			counter++;
+		}
+		createTable.append(")");
+
+		PreparedStatement update;
+		try {
+			update = connect.prepareStatement(createTable.toString());
+			update.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void addColumns(HashMap<String, Object> columns, String tablename) throws SQLException {
+		if (!dbInit) {
+    		initDB();
+    	}
+
+		int counter = 1;
+		int mapSize = columns.size();
+		StringBuilder alterTable = new StringBuilder();
+		alterTable.append("ALTER TABLE ");
+		alterTable.append(tablename);
+		
+		for (String i : columns.keySet()) {
+			String value = columns.get(i);
+			alterTable.append(" ADD COLUMN ");
+			alterTable.append(i);
+			alterTable.append(" ");
+			if (value instanceof String) {
+				alterTable.append(" VARCHAR(255)");
+			} else if (value instanceof int) {
+				alterTable.append(" INT(10)");
+			} else if (value instanceof java.sql.Date) {
+				alterTable.append(" DATE");
+			} else {
+				System.out.println("can't add column to table " + tablename + " with datatype " value.getClass());
+			}
+			if (counter < mapSize) {
+    			builder.append(", ");
+    		}
+			counter++;
+		}
+
+		PreparedStatement update;
+		update = connect.prepareStatement(alterTable.toString());
+		update.executeUpdate();
+	}
+
     public ResultSet select(String table, String columns, HashMap<String, Object> wheres) {
     	if (!dbInit) {
     		initDB();
@@ -130,10 +198,14 @@ public class databaseAccess {
 			update = connect.prepareStatement(updateStatement.toString());
 			update.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
+			try {
+				addColumns(values, table);
+				update = connect.prepareStatement(updateStatement.toString());
+				update.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace;
+			}			
+		}    	
     }
     
     public void update(String table, HashMap <String, Object> values, HashMap<String, Object> wheres) {
@@ -147,7 +219,10 @@ public class databaseAccess {
     		update = connect.prepareStatement(updateStatement.toString());
     		update.executeUpdate();
     	} catch (SQLException e) {
-    		e.printStackTrace();
+			e.printStackTrace;
+    		/* addColumns(values, table);
+			update = connect.prepareStatement(updateStatement.toString());
+			update.executeUpdate(); */
     	}
     }
     
