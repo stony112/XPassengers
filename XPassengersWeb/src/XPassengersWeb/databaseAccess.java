@@ -226,7 +226,7 @@ public class databaseAccess {
     	}
     }
     
-    public void insert(String table, HashMap<String, Object> values) {
+    public long insert(String table, HashMap<String, Object> values) {
     	if (!dbInit) {
     		initDB();
     	}
@@ -239,28 +239,15 @@ public class databaseAccess {
 			System.out.println(updateStatement.toString());
 			update = connect.prepareStatement(updateStatement.toString());
 			update.executeUpdate();
+			ResultSet generatedKeys = update.getGeneratedKeys();
+            if (generatedKeys.next()) {
+               return generatedKeys.getLong(1);
+            }
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
-    }
-    
-    public ResultSet getAirlinesAirplanesData(String columns, int airlineid) {
-    	if (!dbInit) {
-    		initDB();
-    	}
-    	Statement get;
-		try {
-			get = connect.createStatement();
-			ResultSet results = get.executeQuery("SELECT " + columns + " FROM airlines_airplanes where airlineid = " + airlineid);
-			return results;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-		return null;
+    	return 0;
     }
     
     public ResultSet getAirlinesAirplanesPlaneData(int airlineid, int airplaneid) throws SQLException {
@@ -316,24 +303,21 @@ public class databaseAccess {
     		initDB();
     	}
     	try {
-			PreparedStatement createFlight = connect.prepareStatement("insert into flights (fromICAO, toICAO, pilotid, airlineid, cargo, fuel, airplaneid, firstclass, businessclass, economyclass, valueableCargo, date) values (?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-			createFlight.setString(1, from);
-			createFlight.setString(2, to);
-			createFlight.setInt(3, utils.getActivePilot());
-			createFlight.setInt(4, utils.getActiveAirline());
-			createFlight.setInt(5, cargo);
-			createFlight.setInt(6, fuel);
-			createFlight.setInt(7, airplaneID);
-			createFlight.setInt(8, first);
-			createFlight.setInt(9, business);
-			createFlight.setInt(10, economy);
-			createFlight.setInt(11, valueableCargo);
-			createFlight.setDate(12, utils.getSQLTodaysDate());
-			createFlight.executeUpdate();
-			ResultSet generatedKeys = createFlight.getGeneratedKeys();
-            if (generatedKeys.next()) {
-               return generatedKeys.getLong(1);
-            }
+			HashMap<String, Object> createFlight = new HashMap<String, Object>();
+			createFlight.put("fromICAO", from);
+			createFlight.put("toICAO", to);
+			createFlight.put("pilotid", utils.getActivePilot());
+			createFlight.put("airlineid", utils.getActiveAirline());
+			createFlight.put("cargo", cargo);
+			createFlight.put("fuel", fuel);
+			createFlight.put("airplaneid", airplaneID);
+			createFlight.put("firstclass", first);
+			createFlight.put("businessclass", business);
+			createFlight.put("economyclass", economy);
+			createFlight.put("valueableCargo", valueableCargo);
+			createFlight.put("date", utils.getSQLTodaysDate());
+			return insert("flights", createFlight);
+
     	} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
