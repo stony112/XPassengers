@@ -32,7 +32,10 @@ public class SellAircraft extends JFrame {
 		SellAircraft jframe = this;
 		databaseAccess dao = new databaseAccess();
 		int activeAirline = utils.getActiveAirline();
-		ResultSet airplanes = dao.getAirlinesAirplanesData("*", activeAirline);
+		HashMap<String, Object> airplaneWheres = new HashMap<String, Object>();
+		airplaneWheres.put("airlineid", activeAirline);
+		ResultSet airplanes = dao.select("airlines_airplanes", "*", airplaneWheres);
+		
 		
 		try {
 			if (!airplanes.next()) {

@@ -341,37 +341,6 @@ public class databaseAccess {
 		return 0;
     }
     
-    public void endFlight(int id, float flighthours, int points, float distance, double gain, int satisfaction) {
-    	if (!dbInit) {
-    		initDB();
-    	}
-    	try {
-			PreparedStatement endFlight = connect.prepareStatement("update flights set flighthours=?, points=?, distance=?, gain=?, satisfaction=? where id=?");
-			endFlight.setFloat(1, flighthours);
-			endFlight.setInt(2, points);
-			endFlight.setFloat(3, distance);
-			endFlight.setDouble(4, gain);
-			endFlight.setInt(5, satisfaction);
-			endFlight.setInt(6, id);			
-			endFlight.executeUpdate();
-    	} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-	}
-    
-    public void createAirline(String name, String homebase, String iata) throws SQLException {
-    	if (!dbInit) {
-    		initDB();
-    	}
-    	PreparedStatement createAirline = connect.prepareStatement("insert into airlines (name,homebase,iata,balance) values (?,?,?,?)");
-    	createAirline.setString(1, name);
-    	createAirline.setString(2, homebase);
-    	createAirline.setString(3, iata);
-    	createAirline.setFloat(4, 500000);
-    	createAirline.executeUpdate();
-    }
-    
     public boolean checkFuelprice(String type, java.sql.Date date) {
     	try {
     		if (!dbInit) {

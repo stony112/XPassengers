@@ -2,7 +2,11 @@
 <%@ tag import="java.sql.*" %>
 <jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
 <jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
-<% ResultSet aircrafts = dao.getAirlinesAirplanesData("*", utils.getActiveAirline()); %>
+<%
+		HashMap<String, Object> airplaneWheres = new HashMap<String, Object>();
+		airplaneWheres.put("airlineid", utils.getActiveAirline());
+		ResultSet aircrafts = dao.select("airlines_airplanes", "*", airplaneWheres);
+ %>
 <form method="post" action="/createFlightServlet">
 	<fieldset>
 		From (ICAO) <input type="text" name="from" /><br />

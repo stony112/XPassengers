@@ -12,7 +12,9 @@
 	<a class="xp_createNew" href="buyAircraft.jsp">Buy new Aircraft</a>
 	<form method="post" action="/SellAircraftServlet">
 	<%
-		ResultSet boughtAirplanes = dao.getAirlinesAirplanesData("*", utils.getActiveAirline());
+		HashMap<String, Object> airplaneWheres = new HashMap<String, Object>();
+		airplaneWheres.put("airlineid", utils.getActiveAirline());
+		ResultSet boughtAirplanes = dao.select("airlines_airplanes", "*", airplaneWheres);
 		if (boughtAirplanes == null) {
 			utils.checkNewPlanes();
 		}

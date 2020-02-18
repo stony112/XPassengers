@@ -51,7 +51,9 @@ public class PlanNewFlight extends JFrame {
 		databaseAccess dao = new databaseAccess();
 		dao.initDB();
 		int activeAirline = utils.getActiveAirline();
-		ResultSet airplanes = dao.getAirlinesAirplanesData("*", activeAirline);
+		HashMap<String, Object> airplaneWheres = new HashMap<String, Object>();
+		airplaneWheres.put("airlineid", activeAirline);
+		ResultSet airplanes = dao.select("airlines_airplanes", "*", airplaneWheres);
 		
 		JLabel lblStartAirport = new JLabel("Start Airport (ICAO)");
 		lblStartAirport.setBounds(10, 39, 165, 14);

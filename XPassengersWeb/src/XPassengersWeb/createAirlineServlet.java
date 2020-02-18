@@ -25,9 +25,14 @@ public class createAirlineServlet extends HttpServlet{
 		String name = request.getParameter("airlinename");
 		String homebase = request.getParameter("homebase");
 		String iata = request.getParameter("iata");
-		
+		double balance = 500000;
+		HashMap<String, Object> airlines = new HashMap<String, Object>();
+		airlines.put("name", name);
+		airlines.put("homebase", homebase);
+		airlines.put("iata", iata);
+		airlines.put("balance", balance);
 		try {
-			dao.createAirline(name, homebase, iata);
+			dao.insert("airlines", airlines);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

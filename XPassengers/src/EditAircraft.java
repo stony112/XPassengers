@@ -82,7 +82,9 @@ public class EditAircraft extends JFrame {
 		EditAircraft jframe = this;
 		databaseAccess dao = new databaseAccess();
 		int activeAirline = utils.getActiveAirline();
-		ResultSet airplanes = dao.getAirlinesAirplanesData("*", activeAirline);
+		HashMap<String, Object> airplaneWheres = new HashMap<String, Object>();
+		airplaneWheres.put("airlineid", airlineid);
+		ResultSet airplanes = dao.select("airlines_airplanes", "*", airplaneWheres);
 		
 		if (airplanes.next()) {
 			ArrayList<String> airplanesList = new ArrayList();
