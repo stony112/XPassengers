@@ -209,7 +209,10 @@ public class databaseAccess {
     }
     
     public void update(String table, HashMap <String, Object> values, HashMap<String, Object> wheres) {
-    	StringBuilder updateStatement = new StringBuilder();
+    	if (!dbInit) {
+    		initDB();
+    	}
+		StringBuilder updateStatement = new StringBuilder();
     	updateStatement.append("update ");
     	updateStatement.append(table);
     	insertSQLSet(values, updateStatement);
@@ -225,6 +228,23 @@ public class databaseAccess {
 			update.executeUpdate(); */
     	}
     }
+
+	public void delete(String table, HashMap<String,Object> wheres) {
+		if (!dbInit) {
+    		initDB();
+    	}
+		StringBuilder updateStatement = new StringBuilder();
+		updateStatement.append("delete from ");
+		updateStatement.append(table);
+		insertSQLWhere(wheres, updateStatement);
+		PreparedStatement update;
+		try {
+			update = connect.prepareStatement(updateStatement.toString());
+			update.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace;
+		}
+	}
     
     public long insert(String table, HashMap<String, Object> values) {
     	if (!dbInit) {
@@ -236,7 +256,6 @@ public class databaseAccess {
     	insertSQLSet(values, updateStatement);
     	PreparedStatement update;
 		try {
-			System.out.println(updateStatement.toString());
 			update = connect.prepareStatement(updateStatement.toString());
 			update.executeUpdate();
 			ResultSet generatedKeys = update.getGeneratedKeys();
@@ -251,13 +270,10 @@ public class databaseAccess {
     }
     
     public ResultSet getAirlinesAirplanesPlaneData(int airlineid, int airplaneid) throws SQLException {
-    	if (!dbInit) {
-    		initDB();
-    	}
-    	PreparedStatement getAirplane = connect.prepareStatement("SELECT * FROM airlines_airplanes WHERE airlineid = ? AND airplaneid = ?");
-    	getAirplane.setInt(1, airlineid);
-    	getAirplane.setInt(2, airplaneid);
-    	ResultSet results = getAirplane.executeQuery();
+ 		HashMap<String,Object> getAirplane = new HashMap<String,Object>();
+		getAirplane.put("airlineid", airlineid);
+		getAirplane.put("airplaneid", airplaneid);
+		ResultSet results = select("airlines_airplanes", "*", getAirplane);
     	if (results.next()) {
     		return results;
     	}
@@ -265,9 +281,6 @@ public class databaseAccess {
     }
     
     public HashMap<String,Object> getPlaneConfig(int airline, int airplane) throws SQLException {
-    	if (!dbInit) {
-    		initDB();
-    	}
 		ResultSet result = getAirlinesAirplanesPlaneData(airline,airplane);
 		ResultSet planeData = getSingleContent("emptyweight,toweight,fuel,engType", "airplanes", airplane);
 		double toweight = planeData.getDouble("toweight");
@@ -299,9 +312,6 @@ public class databaseAccess {
 	}
     
     public long createNewFlight(String from, String to, int cargo, int fuel, int airplaneID, int first, int business, int economy, int valueableCargo) {
-    	if (!dbInit) {
-    		initDB();
-    	}
     	try {
 			HashMap<String, Object> createFlight = new HashMap<String, Object>();
 			createFlight.put("fromICAO", from);
@@ -362,10 +372,6 @@ public class databaseAccess {
     }
     
     public float createFuelprice(String type) throws SQLException {
-    	java.sql.Date date = utils.getSQLTodaysDate();
-    	if (!dbInit) {
-    		initDB();
-    	}
     	if (!checkFuelprice(type,date)) {
     		float lastPrice = getLastFuelprice(type);
     		float newPrice;
@@ -375,11 +381,12 @@ public class databaseAccess {
     		} else {
     			newPrice = ThreadLocalRandom.current().nextFloat() + ThreadLocalRandom.current().nextInt(1, 2);
     		}
-    		PreparedStatement createFuelprice = connect.prepareStatement("insert into fuelprices (price,date,type) values (?,?,?)");
-    		createFuelprice.setFloat(1, newPrice);
-    		createFuelprice.setDate(2, date);
-    		createFuelprice.setString(3, type);
-    		createFuelprice.executeUpdate();
+
+			HashMap<String,Object> createFuelprice = new HashMap<String,Object>();
+			createFuelprice.put("price", newPrice);
+			createFuelprice.put("date", date);
+			createFuelprice.put("type", type);
+			insert("fuelprices", createFuelprice);
     	}   
     	return getLastFuelprice(type);
     }
@@ -387,10 +394,7 @@ public class databaseAccess {
    
     
     public int checkLicense(int curLicense, int points, float flighthours) {
-    	if (!dbInit) {
-    		initDB();
-    	}
-    	int license = -1;
+     	int license = -1;
     	try {
     		if (curLicense < 24) {
     			ResultSet newLicense = getSingleContent("*", "licenses", curLicense + 1);
@@ -407,34 +411,31 @@ public class databaseAccess {
     }
     
     public void updatePlane(int activeAirline, int plane, int e, int b, int f) throws SQLException {
-    	if (!dbInit) {
-    		initDB();
-    	}
-    	PreparedStatement updatePlane = connect.prepareStatement("update airlines_airplanes set economy=?, business=?, first=? where airlineid=? and airplaneid=?");
-    	updatePlane.setInt(1, e);
-    	updatePlane.setInt(2, b);
-    	updatePlane.setInt(3, f);
-    	updatePlane.setInt(4, activeAirline);
-    	updatePlane.setInt(5, plane);
-    	updatePlane.executeUpdate();
+		HashMap<String,Object> updatePlane = new HashMap<String,Object>();
+		updatePlane.put("economy", e);
+		updatePlane.put("business", b);
+		updatePlane.put("first", f);
+
+		HashMap<String,Object> updatePlaneWheres = new HashMap<String,Object>();
+		updatePlaneWheres.put("airlineid", activeAirline);
+		updatePlaneWheres.put("airplaneid", plane);
+
+		update("airlines_airplanes", updatePlane, updatePlaneWheres);
     }
     
     public void buyPlane (int planeID, double newBalance) {
     	try {    		
-    		if (!dbInit) {
-        		initDB();
-        	}
 			ResultSet airplane = getSingleContent("fuel,seats", "airplanes", planeID);
 			double fuel = airplane.getDouble("fuel");
 			int economy = airplane.getInt("seats");
 			int activeAirline = utils.getActiveAirline();
-			PreparedStatement buyPlane = connect.prepareStatement("insert into airlines_airplanes (airlineid,airplaneid,quality,fuelquantity,economy) values (?,?,?,?,?)");
-			buyPlane.setInt(1, activeAirline);
-			buyPlane.setInt(2, planeID);
-			buyPlane.setInt(3, 100);
-			buyPlane.setDouble(4, fuel);
-			buyPlane.setInt(5, economy);
-			buyPlane.executeUpdate();
+			HashMap<String,Object> buyPlane = new HashMap<String,Object>();
+			buyPlane.put("airlineid", activeAirline);
+			buyPlane.put("airplaneid", planeID);
+			buyPlane.put("quality", 100);
+			buyPlane.put("fuelquantity", fuel);
+			buyPlane.put("economy", economy);
+			insert("airlines_airplanes", buyPlane);
 			updateBalance(newBalance);
     	} catch (SQLException e) {
     		e.printStackTrace();
@@ -442,15 +443,12 @@ public class databaseAccess {
     }
     
     public void sellPlane (int planeID, double newBalance) {
-    	if (!dbInit) {
-    		initDB();
-    	}
     	int activeAirline = utils.getActiveAirline();
     	try {
-    		PreparedStatement sellPlane = connect.prepareStatement("delete from airlines_airplanes where airlineid = ? and airplaneid = ?");
-        	sellPlane.setInt(1, activeAirline);
-        	sellPlane.setInt(2, planeID);
-			sellPlane.executeUpdate();
+			HashMap<String,Object> sellPlane = new HashMap<String,Object>();
+			sellPlane.put("airlineid", activeAirline);
+			sellPlane.put("airplaneid", planeID);
+			delete("airlines_airplanes", sellPlane);
 			updateBalance(newBalance);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -459,14 +457,11 @@ public class databaseAccess {
     }
     
     public void updateBalance(double newBalance) {
-    	if (!dbInit) {
-    		initDB();
-    	}
 		try {
-			PreparedStatement balance = connect.prepareStatement("update airlines set balance = ? where id = ?");
-			balance.setDouble(1, newBalance);
-			balance.setDouble(2, utils.getActiveAirline());
-			balance.executeUpdate();
+			HashMap<String,Object> balance = new HashMap<String,Object>();
+			balance.put("balance", newBalance);
+			update("airlines", balance, utils.getActiveAirline());
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -474,20 +469,17 @@ public class databaseAccess {
     }
 	
 	public void storeFuel(double fuelDif, String fuelType) {
-		if (!dbInit) {
-    		initDB();
-    	}
 		try {
 			double availableFuel;
 			String columnFuel;
 			PreparedStatement storeFuel;
+			
 			if (fuelType == utils.avgas) {
 				columnFuel = "availableFuelAvGas";
-				storeFuel = connect.prepareStatement("update airlines set availableFuelAvGas = ? where id = ?");
 			} else {
 				columnFuel = "availableFuelJetA1";
-				storeFuel = connect.prepareStatement("update airlines set availableFuelJetA1 = ? where id = ?");
 			}
+			
 			String column = columnFuel + ",balance";
 			ResultSet airline = getSingleContent(column, "airlines", utils.getActiveAirline());
 			availableFuel = airline.getDouble(columnFuel);
@@ -501,10 +493,9 @@ public class databaseAccess {
 				double newBalance = balance - completeFuelprice;
 				updateBalance(newBalance);
 			}
-			
-			storeFuel.setDouble(1, newFuel);
-			storeFuel.setInt(2, utils.getActiveAirline());
-			storeFuel.executeUpdate();
+			HashMap<String,Object> storeFuel = new HashMap<String,Object>();
+			storeFuel.put(columnFuel, newFuel);
+			update("airlines", storeFuel, utils.getActiveAirline);
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -530,15 +521,13 @@ public class databaseAccess {
 	}
 	
 	public void updatePlaneFuel(int aircraftid, double newFuel) {
-		if (!dbInit) {
-    		initDB();
-    	}
 		try {
-			PreparedStatement updatePlaneFuel = connect.prepareStatement("update airlines_airplanes set fuelquantity = ? where airlineid = ? and airplaneid = ?");
-			updatePlaneFuel.setDouble(1, newFuel);
-			updatePlaneFuel.setInt(2, utils.getActiveAirline());
-			updatePlaneFuel.setInt(3, aircraftid);
-			updatePlaneFuel.executeUpdate();
+			HashMap<String, Object> updatePlaneFuel = new HashMap<String, Object>();
+			updatePlaneFuel.put("fuelquantity", newFuel);
+			HashMap<String, Object> updatePlaneFuelWheres = new HashMap<String, Object>();
+			updatePlaneFuelWheres.put("airlineid", utils.getActiveAirline()));
+			updatePlaneFuelWheres.put("airplaneid", aircraftid);
+			update("airlines_airplanes", updatePlaneFuel, updatePlaneFuelWheres);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -548,17 +537,14 @@ public class databaseAccess {
     
     public void setPrices(int activeAirline, double first, double business, double economy, double cargo, double free) {
     	try {
-    		if (!dbInit) {
-        		initDB();
-        	}
-			PreparedStatement setPrices = connect.prepareStatement("update airlines set priceFirst = ?, priceBusiness = ?, priceEconomy = ?, priceCargo = ?, freeLuggage = ? where id = ?");
-			setPrices.setDouble(1, first);
-			setPrices.setDouble(2, business);
-			setPrices.setDouble(3, economy);
-			setPrices.setDouble(4, cargo);
-			setPrices.setDouble(5, free);
-			setPrices.setInt(6, activeAirline);
-			setPrices.executeUpdate();
+			HashMap<String, Object> setPrices = new HashMap<String,Object>();
+			setPrices.put("priceFirst", first);
+			setPrices.put("priceBusiness", business);
+			setPrices.put("priceEconomy", economy);
+			setPrices.put("priceCargo", cargo);
+			setPrices.put("freeLuggage", free);
+
+			update("airlines", setPrices, activeAirline);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -566,34 +552,19 @@ public class databaseAccess {
     }
     
     public void importAiports(int id, String icao, String type, String name, int elevation, String iata) {
-    	if (!dbInit) {
-    		initDB();
-    	}
+		HashMap<String,Object> importAirports = new HashMap<String,Object>();
+		importAirports.put("id", id);
+		importAirports.put("icao", icao);
+		importAirports.put("type", type);
+		importAirports.put("name", name);
+		importAirports.put("elevation", elevation):
+		importAirports.put("iata", iata);
     	try {
-			PreparedStatement importAirports = connect.prepareStatement("insert into airports (id,icao,type,name,elevation,iata) values (?,?,?,?,?,?)");
-			importAirports.setInt(1, id);
-			importAirports.setString(2, icao);
-			importAirports.setString(3, type);
-			importAirports.setString(4, name);
-			importAirports.setInt(5, elevation);
-			importAirports.setString(6, iata);
-			importAirports.executeUpdate();
+			insert("airports", importAirports);
 		} catch (SQLException e) {
 			if (e instanceof SQLIntegrityConstraintViolationException) {
-				PreparedStatement updateAirports;
-				try {
-					updateAirports = connect.prepareStatement("update airports set icao = ?, type = ?, name = ?, elevation = ?, iata = ? where id = ?");
-					updateAirports.setString(1, icao);
-					updateAirports.setString(2, type);
-					updateAirports.setString(3, name);
-					updateAirports.setInt(4, elevation);
-					updateAirports.setString(5, iata);
-					updateAirports.setInt(6, id);
-					updateAirports.executeUpdate();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}				
+				importAirports.remove("id");
+				update("airports", importAirports, id);
 			}
 		}
     }
