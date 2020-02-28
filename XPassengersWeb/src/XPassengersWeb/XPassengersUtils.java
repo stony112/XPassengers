@@ -95,68 +95,6 @@ public class XPassengersUtils {
 		}		
 	}
 	
-	public double getRelEcoFirst() {
-		return relEcoFirst;
-	}
-	
-	public double getRelEcoBusni() {
-		return relEcoBusni;
-	}
-	
-	public double getRelBusniFirst() {
-		return relBusniFirst;
-	}
-	
-	public String buildIDName(int id, String name) {
-		StringBuilder idName = new StringBuilder();
-		idName.append(id);
-		idName.append(" - ");
-		idName.append(name);
-		return idName.toString();
-	}
-	
-	public String buildIDNamePrice(int id, String name, float price) {
-		StringBuilder idName = new StringBuilder();
-		DecimalFormat df = new DecimalFormat("#,###.##");
-		df.setRoundingMode(RoundingMode.HALF_EVEN);
-		String priceDF = df.format(price);
-		idName.append(id);
-		idName.append(" - ");
-		idName.append(name);
-		idName.append(" - ");
-		idName.append(priceDF);
-		return idName.toString();
-	}
-	
-	public String buildIDNamePrice(int id, String name, double price) {
-		StringBuilder idName = new StringBuilder();
-		DecimalFormat df = new DecimalFormat("#,###.##");
-		df.setRoundingMode(RoundingMode.HALF_EVEN);
-		String priceDF = df.format(price);
-		idName.append(id);
-		idName.append(" - ");
-		idName.append(name);
-		idName.append(" - ");
-		idName.append(priceDF);
-		return idName.toString();
-	}
-	
-	public int getContentID(Object content) {
-		String selectedObject = content.toString();
-		String[] parts = selectedObject.split(" - ");
-		int id = Integer.parseInt(parts[0]);
-		return id;
-	}
-	
-	public float getSelectedPrice(Object content) {
-		String selectedObject = content.toString();
-		String[] parts = selectedObject.split(" - ");
-		String priceString = parts[2].replace(".", "");
-		priceString = priceString.replace(",", ".");
-		float price = Float.parseFloat(priceString);
-		return price;
-	}
-	
 	public int getActiveAirline() {
 		setIni();
 		int id;
