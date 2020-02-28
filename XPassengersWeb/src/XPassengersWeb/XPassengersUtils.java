@@ -17,14 +17,6 @@ import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTextPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
