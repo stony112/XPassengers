@@ -16,7 +16,7 @@ public class EndFlightServlet extends HttpServlet {
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		databaseAccess dao = new databaseAccess();
+		DatabaseAccess dao = new DatabaseAccess();
 		XPassengersUtils utils = new XPassengersUtils();
 		int activeAirline = utils.getActiveAirline();
 		int id = Integer.parseInt(request.getParameter("id"));

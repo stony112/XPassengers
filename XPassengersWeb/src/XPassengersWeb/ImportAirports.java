@@ -4,12 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class importAirports {
+public class ImportAirports {
 
 	public static void main(String[] args) {
 		String filepath = "D:\\Downloads\\airports.csv";
 		try {
-			databaseAccess dao = new databaseAccess();
+			DatabaseAccess dao = new DatabaseAccess();
 			BufferedReader csvReader = new BufferedReader(new FileReader(filepath));
 			String row;
 			while ((row = csvReader.readLine()) != null) {

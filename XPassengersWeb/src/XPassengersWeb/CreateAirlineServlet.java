@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import javax.servlet.http.*;
 
-public class createAirlineServlet extends HttpServlet{
+public class CreateAirlineServlet extends HttpServlet{
 	
 	/**
 	 * 
@@ -20,7 +20,7 @@ public class createAirlineServlet extends HttpServlet{
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
-		databaseAccess dao = new databaseAccess();
+		DatabaseAccess dao = new DatabaseAccess();
 		XPassengersUtils utils = new XPassengersUtils();
 		String name = request.getParameter("airlinename");
 		String homebase = request.getParameter("homebase");

@@ -152,7 +152,7 @@ public class XPassengersUtils {
 	
 	public ArrayList<String> getLiveries(int airplaneid) {
 		ArrayList<String> liveries = new ArrayList<String>();
-		databaseAccess dao = new databaseAccess();
+		DatabaseAccess dao = new DatabaseAccess();
 		
 		try {
 			dao.initDB();
@@ -175,7 +175,7 @@ public class XPassengersUtils {
 	}
 
 	public int checkNewPlanes() throws ClassNotFoundException, SQLException, InvalidFileFormatException, IOException {
-		databaseAccess dao = new databaseAccess();
+		DatabaseAccess dao = new DatabaseAccess();
 		dao.initDB();
 		setIni();
 		String airplanePath;

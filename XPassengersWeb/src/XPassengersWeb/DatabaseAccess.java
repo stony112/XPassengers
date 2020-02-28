@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class databaseAccess {
+public class DatabaseAccess {
     private Connection connect = null;
     private Statement statement = null;
     private ResultSet resultSet = null;
@@ -552,19 +552,19 @@ public class databaseAccess {
     }
     
     public void importAiports(int id, String icao, String type, String name, int elevation, String iata) {
-		HashMap<String,Object> importAirports = new HashMap<String,Object>();
-		importAirports.put("id", id);
-		importAirports.put("icao", icao);
-		importAirports.put("type", type);
-		importAirports.put("name", name);
-		importAirports.put("elevation", elevation):
-		importAirports.put("iata", iata);
+		HashMap<String,Object> ImportAirports = new HashMap<String,Object>();
+		ImportAirports.put("id", id);
+		ImportAirports.put("icao", icao);
+		ImportAirports.put("type", type);
+		ImportAirports.put("name", name);
+		ImportAirports.put("elevation", elevation):
+		ImportAirports.put("iata", iata);
     	try {
-			insert("airports", importAirports);
+			insert("airports", ImportAirports);
 		} catch (SQLException e) {
 			if (e instanceof SQLIntegrityConstraintViolationException) {
-				importAirports.remove("id");
-				update("airports", importAirports, id);
+				ImportAirports.remove("id");
+				update("airports", ImportAirports, id);
 			}
 		}
     }

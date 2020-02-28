@@ -3,7 +3,7 @@
 <%@ tag import="java.util.Date" %>
 <%@ tag import="java.util.HashMap" %>
 <jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
-<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<jsp:useBean id="dao" class="XPassengersWeb.DatabaseAccess"/>
 
 <a class="xp_createNew" href="newFlight.jsp">Plan new Flight</a>
 <%

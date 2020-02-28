@@ -5,7 +5,7 @@
 <t:generic>
 	<jsp:body>
 		<h3>new Airline</h3>
-		<form method="post" action="/createAirlineServlet">
+		<form method="post" action="/CreateAirlineServlet">
 			<fieldset>
 				Name <input type="text" name="airlinename" /><br />
 				Homebase (ICAO) <input type="text" name="homebase"/><br />

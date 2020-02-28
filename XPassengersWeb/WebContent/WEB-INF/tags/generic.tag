@@ -4,7 +4,7 @@
 <%@ tag import="java.sql.*" %>
 <%@ tag import="java.util.Date" %>
 <jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
-<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<jsp:useBean id="dao" class="XPassengersWeb.DatabaseAccess"/>
 <%
 	utils.setIni(); 
 	int activeAirline = utils.getActiveAirline();

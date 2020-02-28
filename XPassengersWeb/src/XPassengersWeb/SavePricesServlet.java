@@ -18,7 +18,7 @@ public class SavePricesServlet extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
 		XPassengersUtils utils = new XPassengersUtils();
-		databaseAccess dao = new databaseAccess();
+		DatabaseAccess dao = new DatabaseAccess();
 		double first = Double.parseDouble(request.getParameter("priceFirst"));
 		double business = Double.parseDouble(request.getParameter("priceBusiness"));
 		double economy = Double.parseDouble(request.getParameter("priceEconomy"));

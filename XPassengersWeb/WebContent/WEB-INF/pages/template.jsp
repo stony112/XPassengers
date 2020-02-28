@@ -4,7 +4,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
-<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<jsp:useBean id="dao" class="XPassengersWeb.DatabaseAccess"/>
 <!DOCTYPE html>
 <html>
 	<head>

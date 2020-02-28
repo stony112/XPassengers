@@ -21,7 +21,7 @@ public class BuyFuelServlet extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
 		XPassengersUtils utils = new XPassengersUtils();
-		databaseAccess dao = new databaseAccess();
+		DatabaseAccess dao = new DatabaseAccess();
 		String fuelType = request.getParameter("fuelType");
 		double fuelAmmount = Double.parseDouble(request.getParameter("fuelAmmount"));
 		int activeAirline = utils.getActiveAirline();

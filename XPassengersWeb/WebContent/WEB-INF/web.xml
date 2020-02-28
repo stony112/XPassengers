@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
     <servlet>
-        <servlet-name>createAirlineServlet</servlet-name>
-        <servlet-class>XPassengersWeb.createAirlineServlet</servlet-class>
+        <servlet-name>CreateAirlineServlet</servlet-name>
+        <servlet-class>XPassengersWeb.CreateAirlineServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>createAirlineServlet</servlet-name>
-        <url-pattern>/createAirlineServlet</url-pattern>
+        <servlet-name>CreateAirlineServlet</servlet-name>
+        <url-pattern>/CreateAirlineServlet</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>ActivateServlet</servlet-name>
@@ -17,12 +17,12 @@
         <url-pattern>/ActivateServlet</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>createPilotServlet</servlet-name>
-        <servlet-class>XPassengersWeb.createPilotServlet</servlet-class>
+        <servlet-name>CreatePilotServlet</servlet-name>
+        <servlet-class>XPassengersWeb.CreatePilotServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>createPilotServlet</servlet-name>
-        <url-pattern>/createPilotServlet</url-pattern>
+        <servlet-name>CreatePilotServlet</servlet-name>
+        <url-pattern>/CreatePilotServlet</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>BuyAircraftServlet</servlet-name>
@@ -81,12 +81,12 @@
         <url-pattern>/SavePricesServlet</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>createFlightServlet</servlet-name>
-        <servlet-class>XPassengersWeb.createFlightServlet</servlet-class>
+        <servlet-name>CreateFlightServlet</servlet-name>
+        <servlet-class>XPassengersWeb.CreateFlightServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>createFlightServlet</servlet-name>
-        <url-pattern>/createFlightServlet</url-pattern>
+        <servlet-name>CreateFlightServlet</servlet-name>
+        <url-pattern>/CreateFlightServlet</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>EndFlightServlet</servlet-name>

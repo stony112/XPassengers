@@ -1,7 +1,7 @@
 <%@tag description="Overall Page template" pageEncoding="UTF-8"%>
 <%@ tag import="java.sql.*" %>
 <jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
-<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<jsp:useBean id="dao" class="XPassengersWeb.DatabaseAccess"/>
 <%
 	int activeAirline = utils.getActiveAirline();
 	ResultSet prices = dao.getSingleContent("*","airlines", activeAirline);

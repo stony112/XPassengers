@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class createFlightServlet extends HttpServlet  {
+public class CreateFlightServlet extends HttpServlet  {
 	/**
 	 * 
 	 */
@@ -23,7 +23,7 @@ public class createFlightServlet extends HttpServlet  {
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
-		databaseAccess dao = new databaseAccess();
+		DatabaseAccess dao = new DatabaseAccess();
 		XPassengersUtils utils = new XPassengersUtils();
 		int activeAirline = utils.getActiveAirline();
 		int activePilot = utils.getActivePilot();

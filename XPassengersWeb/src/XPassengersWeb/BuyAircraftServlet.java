@@ -20,7 +20,7 @@ public class BuyAircraftServlet extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
 		XPassengersUtils utils = new XPassengersUtils();
-		databaseAccess dao = new databaseAccess();
+		DatabaseAccess dao = new DatabaseAccess();
 		String button = request.getParameter("buy");
 		String idPrice = button.replace("buy", "");
 		int separatorIndex = idPrice.indexOf("-");

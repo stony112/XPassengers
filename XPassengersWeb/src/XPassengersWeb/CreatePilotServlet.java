@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.*;
 
-public class createPilotServlet extends HttpServlet{
+public class CreatePilotServlet extends HttpServlet{
 	
 	/**
 	 * 
@@ -23,7 +23,7 @@ public class createPilotServlet extends HttpServlet{
 	
 	@Override
    public void doPost(HttpServletRequest request, HttpServletResponse response) {
-		databaseAccess dao = new databaseAccess();
+		DatabaseAccess dao = new DatabaseAccess();
 		XPassengersUtils utils = new XPassengersUtils();
 		String firstname = request.getParameter("pilotfirstname");
 		String lastname = request.getParameter("pilotlastname");

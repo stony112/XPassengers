@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.HashMap" %>
-<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<jsp:useBean id="dao" class="XPassengersWeb.DatabaseAccess"/>
 <%	
 	ResultSet airlines = dao.getResults("airlines");
 	HashMap<Integer, String> listAirline = new HashMap<Integer, String>();
@@ -19,7 +19,7 @@
 <t:generic>
 	<jsp:body>
 		<h3>new Pilot</h3>
-		<form method="post" action="/createPilotServlet">
+		<form method="post" action="/CreatePilotServlet">
 			<fieldset>
 				Firstname<input type="text" name="pilotfirstname" />
 				Lastname<input type="text" name="pilotlastname"/>

@@ -20,7 +20,7 @@ public class EditAircraftServlet extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
 		XPassengersUtils utils = new XPassengersUtils();
-		databaseAccess dao = new databaseAccess();		
+		DatabaseAccess dao = new DatabaseAccess();		
 		int activeAirline = utils.getActiveAirline();
 		String button = request.getParameter("save");
 		int airplaneID = Integer.valueOf(button.replace("save", ""));

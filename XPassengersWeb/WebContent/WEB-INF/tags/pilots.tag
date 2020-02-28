@@ -2,7 +2,7 @@
 <%@ tag import="java.sql.*" %>
 <%@ tag import="java.util.HashMap" %>
 <jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
-<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<jsp:useBean id="dao" class="XPassengersWeb.DatabaseAccess"/>
 <a class="xp_createNew" href="/pilots/newPilot.jsp">Create new Pilot</a>
 <form method="post" action="/ActivateServlet">
 <%

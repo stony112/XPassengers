@@ -2,7 +2,7 @@
 <%@ tag import="java.sql.*" %>
 <%@ tag import="java.util.Date" %>
 <jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
-<jsp:useBean id="dao" class="XPassengersWeb.databaseAccess"/>
+<jsp:useBean id="dao" class="XPassengersWeb.DatabaseAccess"/>
 <%
 	ResultSet airline = dao.getSingleContent("*", "airlines", utils.getActiveAirline());
 	int id = Integer.valueOf(request.getParameter("id"));
