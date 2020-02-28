@@ -131,20 +131,16 @@ function closeModal() {
 	<h3><%= aircraftDetail.getString("name") %></h3>
 	<div class="xp_seatconfig xp_detailWrapper">
 		<h4>Seat-Config</h4>
-		<% if (seats >= 130) {%>
-			<div class="xp_sliderWrapper">
-				<label for="sliderFirst" class="xp_sliderLabel">First</label>
-				<input name="sliderFirst" value="<%= curFir %>" type="range" min="0" max="<%= (int) (seats/relEcoFirst) %>" value="<%= aircraft.getInt("first") %>" class="xp_slider" id="xp_sliderFirst"/>
-				<span id="xp_sliderFirstValue" class="xp_sliderValue"></span>
-			</div>
-		<% } %>
-		<% if (seats >= 15) { %>
+		<div class="xp_sliderWrapper">
+			<label for="sliderFirst" class="xp_sliderLabel">First</label>
+			<input name="sliderFirst" value="<%= curFir %>" type="range" min="0" max="<%= (int) (seats/relEcoFirst) %>" value="<%= aircraft.getInt("first") %>" class="xp_slider" id="xp_sliderFirst"/>
+			<span id="xp_sliderFirstValue" class="xp_sliderValue"></span>
+		</div>
 			<div class="xp_sliderWrapper">
 				<label for="sliderBusiness" class="xp_sliderLabel">Business</label>
 				<input name="sliderBusiness" value="<%= curBus %>" type="range" min="0" max="<%= (int) (seats/relEcoBusni) %>" value="<%= aircraft.getInt("business") %>" class="xp_slider" id="xp_sliderBusiness"/>
 				<span id="xp_sliderBusinessValue" class="xp_sliderValue"></span>
 			</div>
-		<% } %>
 		<div class="xp_sliderWrapper">
 			<label for="sliderEconomy" class="xp_sliderLabel">Economy</label>
 			<span id="xp_sliderEconomyValue" class="xp_sliderValue"><%= curEco %></span>
