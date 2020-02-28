@@ -73,7 +73,7 @@ public class XPassengersUtils {
 	public void setIni() {
 		File configIni;
 		try {
-			configIni = new File("D:\\EclipseProjects\\XPassengers\\XPassengersWeb\\WebContent\\config\\config.ini");
+			configIni = new File("E:\\EclipseProjects\\XPassengers\\XPassengersWeb\\WebContent\\config\\config.ini");
 			try {
 				ini = new Wini(configIni);
 			} catch(FileNotFoundException e) {

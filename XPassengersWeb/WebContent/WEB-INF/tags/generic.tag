@@ -18,17 +18,25 @@
 	} else {	
 		
 		ResultSet activeAirlineSet = dao.getSingleContent("*", "airlines", activeAirline);
-		airlineName = activeAirlineSet.getString("name");
-		balance = activeAirlineSet.getDouble("balance");
-		price = utils.doubleToPrice(balance);
+		if (activeAirlineSet == null) {
+			airlineName = "No Airlines available";
+		} else {
+			airlineName = activeAirlineSet.getString("name");
+			balance = activeAirlineSet.getDouble("balance");
+			price = utils.doubleToPrice(balance);
+		}
 	}
 	if (activePilot == 0) {
 		pilotName = "No Active Pilot";
 	} else {
 		ResultSet activePilotSet = dao.getSingleContent("*", "pilots", activePilot);
-		String firstname = activePilotSet.getString("firstname");
-		String lastname = activePilotSet.getString("lastname");
-		pilotName = firstname + " " + lastname;
+		if (activePilotSet == null) {
+			pilotName = "No Pilot available";
+		} else {
+			String firstname = activePilotSet.getString("firstname");
+			String lastname = activePilotSet.getString("lastname");
+			pilotName = firstname + " " + lastname;
+		}
 	}
 %>
 <html>

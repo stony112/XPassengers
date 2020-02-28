@@ -1,5 +1,6 @@
 <%@tag description="Overall Page template" pageEncoding="UTF-8"%>
 <%@ tag import="java.sql.*" %>
+<%@ tag import="java.util.HashMap" %>
 <jsp:useBean id="utils" class="XPassengersWeb.XPassengersUtils"/>
 <jsp:useBean id="dao" class="XPassengersWeb.DatabaseAccess"/>
 <%

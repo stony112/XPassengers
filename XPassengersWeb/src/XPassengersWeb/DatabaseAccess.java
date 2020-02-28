@@ -1,10 +1,13 @@
 package XPassengersWeb;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLSyntaxErrorException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -36,16 +39,22 @@ public class DatabaseAccess {
     	return results;
     }
     
-    public ResultSet getSingleContent(String columns, String table, int id) throws SQLException {
-    	initDB();
+    public ResultSet getSingleContent(String columns, String table, int id) {
     	if (!dbInit) {
     		initDB();
     	}
-    	Statement get = connect.createStatement();
-    	ResultSet results = get.executeQuery("SELECT " + columns + " FROM " + table + " where id = " + id);
-    	if (results.next()) {
-    		return results;
-    	}
+    	
+    	ResultSet results;
+		try {
+			Statement get = connect.createStatement();
+			results = get.executeQuery("SELECT " + columns + " FROM " + table + " where id = " + id);
+	    	if (results.next()) {
+	    		return results;
+	    	}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	return null;
     }
     
@@ -91,7 +100,7 @@ public class DatabaseAccess {
     	
     }
     
-	public void createTable(HashMap<String, String> columns, String tablename) {
+	public void createTable(HashMap<String, Object> columns, String tablename) {
 		if (!dbInit) {
     		initDB();
     	}
@@ -102,12 +111,20 @@ public class DatabaseAccess {
 		createTable.append(tablename);
 		createTable.append(" id INT NOT NULL AUTO_INCREMENT, ");
 		for (String i : columns.keySet()) {
-			String value = columns.get(i);
+			Object value = columns.get(i);
 			createTable.append(i);
 			createTable.append(" ");
-			createTable.append(value);
+			if (value instanceof String) {
+				createTable.append(" VARCHAR(255)");
+			} else if (value instanceof Integer) {
+				createTable.append(" INT(10)");
+			} else if (value instanceof java.sql.Date) {
+				createTable.append(" DATE");
+			} else {
+				System.out.println("can't add column to table " + tablename + " with datatype " + value.getClass());
+			}			
 			if (counter < mapSize) {
-    			builder.append(", ");
+				createTable.append(", ");
     		}
 			counter++;
 		}
@@ -122,8 +139,39 @@ public class DatabaseAccess {
 			e.printStackTrace();
 		}
 	}
-
-	public void addColumns(HashMap<String, Object> columns, String tablename) throws SQLException {
+	
+	public boolean columnExists(String table, String column) {
+		try {
+			DatabaseMetaData md = connect.getMetaData();
+			ResultSet rs = md.getColumns(null, null, table, column);
+			if (rs.next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public boolean tableExists(String table) {
+		try {
+			DatabaseMetaData md = connect.getMetaData();
+			ResultSet rs = md.getTables(null, null, table, null);
+			if (rs.next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return false;
+	}
+	
+	public void addColumns(HashMap<String, Object> columns, String tablename) {
 		if (!dbInit) {
     		initDB();
     	}
@@ -133,30 +181,41 @@ public class DatabaseAccess {
 		StringBuilder alterTable = new StringBuilder();
 		alterTable.append("ALTER TABLE ");
 		alterTable.append(tablename);
+		alterTable.append(" ADD ");
 		
 		for (String i : columns.keySet()) {
-			String value = columns.get(i);
-			alterTable.append(" ADD COLUMN ");
-			alterTable.append(i);
-			alterTable.append(" ");
-			if (value instanceof String) {
-				alterTable.append(" VARCHAR(255)");
-			} else if (value instanceof int) {
-				alterTable.append(" INT(10)");
-			} else if (value instanceof java.sql.Date) {
-				alterTable.append(" DATE");
-			} else {
-				System.out.println("can't add column to table " + tablename + " with datatype " value.getClass());
+			if (!columnExists(tablename, i)) {
+				Object value = columns.get(i);
+				alterTable.append(i);
+				alterTable.append(" ");
+				if (value instanceof String) {
+					alterTable.append(" VARCHAR(255)");
+				} else if (value instanceof Integer) {
+					alterTable.append(" INT(10)");
+				} else if (value instanceof java.sql.Date) {
+					alterTable.append(" DATE");
+				} else {
+					System.out.println("can't add column to table " + tablename + " with datatype " + value.getClass());
+				}
+				if (counter < mapSize) {
+					alterTable.append(", ");
+	    		}
 			}
-			if (counter < mapSize) {
-    			builder.append(", ");
-    		}
 			counter++;
 		}
-
+		alterTable.append(";");
+		String updateString = alterTable.toString();
+		if (updateString.endsWith(", ;")) {
+			updateString = updateString.replace(", ;", ";");
+		}
 		PreparedStatement update;
-		update = connect.prepareStatement(alterTable.toString());
-		update.executeUpdate();
+		try {
+			update = connect.prepareStatement(updateString);
+			update.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
     public ResultSet select(String table, String columns, HashMap<String, Object> wheres) {
@@ -177,7 +236,6 @@ public class DatabaseAccess {
 	    		return results;
 	    	}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}    	
     	return null;
@@ -199,11 +257,14 @@ public class DatabaseAccess {
 			update.executeUpdate();
 		} catch (SQLException e) {
 			try {
+				if (!tableExists(table)) {
+					createTable(values, table);
+				}
 				addColumns(values, table);
 				update = connect.prepareStatement(updateStatement.toString());
 				update.executeUpdate();
-			} catch (SQLException e) {
-				e.printStackTrace;
+			} catch (SQLException se) {
+				se.printStackTrace();
 			}			
 		}    	
     }
@@ -222,7 +283,7 @@ public class DatabaseAccess {
     		update = connect.prepareStatement(updateStatement.toString());
     		update.executeUpdate();
     	} catch (SQLException e) {
-			e.printStackTrace;
+			e.printStackTrace();
     		/* addColumns(values, table);
 			update = connect.prepareStatement(updateStatement.toString());
 			update.executeUpdate(); */
@@ -242,7 +303,7 @@ public class DatabaseAccess {
 			update = connect.prepareStatement(updateStatement.toString());
 			update.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace;
+			e.printStackTrace();
 		}
 	}
     
@@ -256,16 +317,24 @@ public class DatabaseAccess {
     	insertSQLSet(values, updateStatement);
     	PreparedStatement update;
 		try {
-			update = connect.prepareStatement(updateStatement.toString());
+			update = connect.prepareStatement(updateStatement.toString(),Statement.RETURN_GENERATED_KEYS);
 			update.executeUpdate();
 			ResultSet generatedKeys = update.getGeneratedKeys();
             if (generatedKeys.next()) {
                return generatedKeys.getLong(1);
             }
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			if (e instanceof SQLSyntaxErrorException) {
+				String message = e.getMessage();
+				if (message.contains("Unknown column")) {
+					addColumns(values, table);
+				} else {
+					e.printStackTrace();
+				}				
+			} else {
+				e.printStackTrace();
+			}
+		} 
     	return 0;
     }
     
@@ -312,27 +381,20 @@ public class DatabaseAccess {
 	}
     
     public long createNewFlight(String from, String to, int cargo, int fuel, int airplaneID, int first, int business, int economy, int valueableCargo) {
-    	try {
-			HashMap<String, Object> createFlight = new HashMap<String, Object>();
-			createFlight.put("fromICAO", from);
-			createFlight.put("toICAO", to);
-			createFlight.put("pilotid", utils.getActivePilot());
-			createFlight.put("airlineid", utils.getActiveAirline());
-			createFlight.put("cargo", cargo);
-			createFlight.put("fuel", fuel);
-			createFlight.put("airplaneid", airplaneID);
-			createFlight.put("firstclass", first);
-			createFlight.put("businessclass", business);
-			createFlight.put("economyclass", economy);
-			createFlight.put("valueableCargo", valueableCargo);
-			createFlight.put("date", utils.getSQLTodaysDate());
-			return insert("flights", createFlight);
-
-    	} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 0;
+    	HashMap<String, Object> createFlight = new HashMap<String, Object>();
+		createFlight.put("fromICAO", from);
+		createFlight.put("toICAO", to);
+		createFlight.put("pilotid", utils.getActivePilot());
+		createFlight.put("airlineid", utils.getActiveAirline());
+		createFlight.put("cargo", cargo);
+		createFlight.put("fuel", fuel);
+		createFlight.put("airplaneid", airplaneID);
+		createFlight.put("firstclass", first);
+		createFlight.put("businessclass", business);
+		createFlight.put("economyclass", economy);
+		createFlight.put("valueableCargo", valueableCargo);
+		createFlight.put("date", utils.getSQLTodaysDate());
+		return insert("flights", createFlight);
     }
     
     public boolean checkFuelprice(String type, java.sql.Date date) {
@@ -372,6 +434,7 @@ public class DatabaseAccess {
     }
     
     public float createFuelprice(String type) throws SQLException {
+    	Date date = utils.getSQLTodaysDate();
     	if (!checkFuelprice(type,date)) {
     		float lastPrice = getLastFuelprice(type);
     		float newPrice;
@@ -444,35 +507,24 @@ public class DatabaseAccess {
     
     public void sellPlane (int planeID, double newBalance) {
     	int activeAirline = utils.getActiveAirline();
-    	try {
-			HashMap<String,Object> sellPlane = new HashMap<String,Object>();
-			sellPlane.put("airlineid", activeAirline);
-			sellPlane.put("airplaneid", planeID);
-			delete("airlines_airplanes", sellPlane);
-			updateBalance(newBalance);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+    	HashMap<String,Object> sellPlane = new HashMap<String,Object>();
+		sellPlane.put("airlineid", activeAirline);
+		sellPlane.put("airplaneid", planeID);
+		delete("airlines_airplanes", sellPlane);
+		updateBalance(newBalance);
     	
     }
     
     public void updateBalance(double newBalance) {
-		try {
-			HashMap<String,Object> balance = new HashMap<String,Object>();
-			balance.put("balance", newBalance);
-			update("airlines", balance, utils.getActiveAirline());
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		HashMap<String,Object> balance = new HashMap<String,Object>();
+		balance.put("balance", newBalance);
+		update("airlines", balance, utils.getActiveAirline());
     }
 	
 	public void storeFuel(double fuelDif, String fuelType) {
 		try {
 			double availableFuel;
 			String columnFuel;
-			PreparedStatement storeFuel;
 			
 			if (fuelType == utils.avgas) {
 				columnFuel = "availableFuelAvGas";
@@ -493,9 +545,9 @@ public class DatabaseAccess {
 				double newBalance = balance - completeFuelprice;
 				updateBalance(newBalance);
 			}
-			HashMap<String,Object> storeFuel = new HashMap<String,Object>();
-			storeFuel.put(columnFuel, newFuel);
-			update("airlines", storeFuel, utils.getActiveAirline);
+			HashMap<String,Object> storeFuelMap = new HashMap<String,Object>();
+			storeFuelMap.put(columnFuel, newFuel);
+			update("airlines", storeFuelMap, utils.getActiveAirline());
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -521,34 +573,24 @@ public class DatabaseAccess {
 	}
 	
 	public void updatePlaneFuel(int aircraftid, double newFuel) {
-		try {
-			HashMap<String, Object> updatePlaneFuel = new HashMap<String, Object>();
-			updatePlaneFuel.put("fuelquantity", newFuel);
-			HashMap<String, Object> updatePlaneFuelWheres = new HashMap<String, Object>();
-			updatePlaneFuelWheres.put("airlineid", utils.getActiveAirline()));
-			updatePlaneFuelWheres.put("airplaneid", aircraftid);
-			update("airlines_airplanes", updatePlaneFuel, updatePlaneFuelWheres);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		HashMap<String, Object> updatePlaneFuel = new HashMap<String, Object>();
+		updatePlaneFuel.put("fuelquantity", newFuel);
+		HashMap<String, Object> updatePlaneFuelWheres = new HashMap<String, Object>();
+		updatePlaneFuelWheres.put("airlineid", utils.getActiveAirline());
+		updatePlaneFuelWheres.put("airplaneid", aircraftid);
+		update("airlines_airplanes", updatePlaneFuel, updatePlaneFuelWheres);
 		
 	}
     
     public void setPrices(int activeAirline, double first, double business, double economy, double cargo, double free) {
-    	try {
-			HashMap<String, Object> setPrices = new HashMap<String,Object>();
-			setPrices.put("priceFirst", first);
-			setPrices.put("priceBusiness", business);
-			setPrices.put("priceEconomy", economy);
-			setPrices.put("priceCargo", cargo);
-			setPrices.put("freeLuggage", free);
+    	HashMap<String, Object> setPrices = new HashMap<String,Object>();
+		setPrices.put("priceFirst", first);
+		setPrices.put("priceBusiness", business);
+		setPrices.put("priceEconomy", economy);
+		setPrices.put("priceCargo", cargo);
+		setPrices.put("freeLuggage", free);
 
-			update("airlines", setPrices, activeAirline);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		update("airlines", setPrices, activeAirline);
     }
     
     public void importAiports(int id, String icao, String type, String name, int elevation, String iata) {
@@ -557,16 +599,9 @@ public class DatabaseAccess {
 		ImportAirports.put("icao", icao);
 		ImportAirports.put("type", type);
 		ImportAirports.put("name", name);
-		ImportAirports.put("elevation", elevation):
+		ImportAirports.put("elevation", elevation);
 		ImportAirports.put("iata", iata);
-    	try {
-			insert("airports", ImportAirports);
-		} catch (SQLException e) {
-			if (e instanceof SQLIntegrityConstraintViolationException) {
-				ImportAirports.remove("id");
-				update("airports", ImportAirports, id);
-			}
-		}
+    	insert("airports", ImportAirports);
     }
     
     public int countWhere(String table, String condition) {

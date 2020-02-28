@@ -3,6 +3,7 @@ package XPassengersWeb;
 import javax.servlet.http.HttpServlet;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import javax.servlet.http.*;
 
@@ -31,12 +32,7 @@ public class CreateAirlineServlet extends HttpServlet{
 		airlines.put("homebase", homebase);
 		airlines.put("iata", iata);
 		airlines.put("balance", balance);
-		try {
-			dao.insert("airlines", airlines);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		dao.insert("airlines", airlines);
 		
 		utils.redirect(request, response);
    }
