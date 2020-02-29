@@ -36,6 +36,7 @@ public class DatabaseAccess {
     	}
     	Statement get = connect.createStatement();
     	ResultSet results = get.executeQuery("SELECT * FROM " + table);
+    	
     	return results;
     }
     
@@ -104,16 +105,14 @@ public class DatabaseAccess {
 		if (!dbInit) {
     		initDB();
     	}
-		int counter = 1;
-		int mapSize = columns.size();
 		StringBuilder createTable = new StringBuilder();
 		createTable.append("CREATE TABLE ");
 		createTable.append(tablename);
-		createTable.append(" id INT NOT NULL AUTO_INCREMENT, ");
+		createTable.append(" id INT NOT NULL AUTO_INCREMENT ");
 		for (String i : columns.keySet()) {
+			createTable.append(", ");
 			Object value = columns.get(i);
 			createTable.append(i);
-			createTable.append(" ");
 			if (value instanceof String) {
 				createTable.append(" VARCHAR(255)");
 			} else if (value instanceof Integer) {
@@ -122,13 +121,8 @@ public class DatabaseAccess {
 				createTable.append(" DATE");
 			} else {
 				System.out.println("can't add column to table " + tablename + " with datatype " + value.getClass());
-			}			
-			if (counter < mapSize) {
-				createTable.append(", ");
-    		}
-			counter++;
+			}
 		}
-		createTable.append(")");
 
 		PreparedStatement update;
 		try {
@@ -257,9 +251,6 @@ public class DatabaseAccess {
 			update.executeUpdate();
 		} catch (SQLException e) {
 			try {
-				if (!tableExists(table)) {
-					createTable(values, table);
-				}
 				addColumns(values, table);
 				update = connect.prepareStatement(updateStatement.toString());
 				update.executeUpdate();
@@ -283,10 +274,13 @@ public class DatabaseAccess {
     		update = connect.prepareStatement(updateStatement.toString());
     		update.executeUpdate();
     	} catch (SQLException e) {
-			e.printStackTrace();
-    		/* addColumns(values, table);
-			update = connect.prepareStatement(updateStatement.toString());
-			update.executeUpdate(); */
+    		try {
+				addColumns(values, table);
+				update = connect.prepareStatement(updateStatement.toString());
+				update.executeUpdate();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}	
     	}
     }
 
@@ -620,6 +614,35 @@ public class DatabaseAccess {
 			e.printStackTrace();
 		}
     	return 0;   	
+    }
+    
+    public void importLicenses() {
+    	if (!dbInit) {
+    		initDB();
+    	}     	
+    	for (String i : ImportLicenses.licensesHours.keySet()) {
+    		StringBuilder updateStatement = new StringBuilder();
+        	updateStatement.append("insert into licenses ");
+        	updateStatement.append(" set ");
+    		updateStatement.append("hours=");
+    		int hours = ImportLicenses.licensesHours.get(i);
+    		updateStatement.append(hours);
+    		updateStatement.append(", name=");
+    		String name = ImportLicenses.licensesNames.get(i);
+    		updateStatement.append("'");
+    		updateStatement.append(name);
+    		updateStatement.append("', short=");
+    		updateStatement.append("'");
+    		updateStatement.append(i);
+    		updateStatement.append("'");    	
+	    	PreparedStatement update;
+			try {
+				update = connect.prepareStatement(updateStatement.toString(),Statement.RETURN_GENERATED_KEYS);
+				update.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    	}
     }
 
     private void close() {

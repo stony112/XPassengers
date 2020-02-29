@@ -15,23 +15,23 @@
 <div class="xp_options">
 	<div class="xp_option">
 		<label for="priceFirst" class="xp_optionsLabel">Price First-Class-Ticket: </label>
-		<input type="number" name="priceFirst" class="xp_optionsInput" value="<%= priceFirst %>"/>
+		<input type="number" name="priceFirst" class="xp_optionsInput" value="<%= priceFirst %>" max="<%= utils.firstMax %>"/>
 	</div>
 	<div class="xp_option">
 		<label for="priceBusiness" class="xp_optionsLabel">Price Business-Class-Ticket: </label>
-		<input type="number" name="priceBusiness" class="xp_optionsInput" value="<%= priceBusiness %>"/>
+		<input type="number" name="priceBusiness" class="xp_optionsInput" value="<%= priceBusiness %>" max="<%= utils.businessMax %>"/>
 	</div>
 	<div class="xp_option">
 		<label for="priceEconomy" class="xp_optionsLabel">Price Economy-Class-Ticket: </label>
-		<input type="number" name="priceEconomy" class="xp_optionsInput" value="<%= priceEconomy %>"/>
+		<input type="number" name="priceEconomy" class="xp_optionsInput" value="<%= priceEconomy %>" max="<%= utils.economyMax %>"/>
 	</div>
 	<div class="xp_option">
 		<label for="priceCargo" class="xp_optionsLabel">Price/lbs Cargo: </label>
-		<input type="number" name="priceCargo" class="xp_optionsInput" value="<%= priceCargo %>"/>
+		<input type="number" name="priceCargo" class="xp_optionsInput" value="<%= priceCargo %>" max="<%= utils.cargoMax %>"/>
 	</div>
 	<div class="xp_option">
 		<label for="freeLuggage" class="xp_optionsLabel">Free Luggage (lbs): </label>
-		<input type="number" name="freeLuggage" class="xp_optionsInput" value="<%= freeLuggage %>"/>
+		<input type="number" name="freeLuggage" class="xp_optionsInput" value="<%= freeLuggage %>" max="<%= utils.freeMax %>"/>
 	</div>
 	<input type="submit"/>
 </div>

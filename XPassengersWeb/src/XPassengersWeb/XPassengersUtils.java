@@ -28,11 +28,11 @@ public class XPassengersUtils {
 	public String jetA1 = "jetA1";
 	public String avgas = "avgas";
 	double toLbs = 2.20462;
-	final static double economyMax = 100;
-	final static double businessMax = 200;
-	final static double firstMax = 400;
-	final static double cargoMax = 30;
-	final static double freeMax = 50;
+	public final static double economyMax = 100;
+	public final static double businessMax = 200;
+	public final static double firstMax = 400;
+	public final static double cargoMax = 30;
+	public final static double freeMax = 50;
 	Wini ini;
 	
 	public static Map<String, Integer> seatMapping;
@@ -41,32 +41,55 @@ public class XPassengersUtils {
 		seatMapping.put("ASK21", 1);
 		seatMapping.put("L5_Sentinel", 1);
 		seatMapping.put("DR401", 3);
+		seatMapping.put("DR401_CDI155", 3);
 		seatMapping.put("Cessna_172", 3);
+		seatMapping.put("Cessna_172SP", 3);
+		seatMapping.put("Cessna_172SP_G1000", 3);
+		seatMapping.put("Cessna_172SP_seaplane", 3);
 		seatMapping.put("c400", 3);
 		seatMapping.put("Orbiter", 5);
 		seatMapping.put("Baron_58", 5);
 		seatMapping.put("CirrusSF50", 6);
 		seatMapping.put("C90B", 6);
 		seatMapping.put("S-76", 12);
+		seatMapping.put("S-76C", 12);
 		seatMapping.put("DC-3", 32);
+		seatMapping.put("VSL DC-3", 32);
 		seatMapping.put("E-170", 80);
+		seatMapping.put("SSGE-170LR_Evo_11", 80);
+		seatMapping.put("Dash8Q400_XP11", 86);
 		seatMapping.put("E-195", 126);
-		seatMapping.put("B733", 150);
-		seatMapping.put("A320", 150);
-		seatMapping.put("a319", 156);
+		seatMapping.put("SSGE-195LR_Evo_11", 126);
+		seatMapping.put("737", 149);
+		seatMapping.put("b737", 149);
+		seatMapping.put("B733", 150);		
+		seatMapping.put("a319", 160);
+		seatMapping.put("a319_StdDef", 160);
+		seatMapping.put("a319_XP10", 160);
 		seatMapping.put("MD80", 172);
+		seatMapping.put("A320", 180);
+		seatMapping.put("a320neo", 180);
 		seatMapping.put("b738", 189);
+		seatMapping.put("b738_4k", 189);
 		seatMapping.put("b739", 189);
-		seatMapping.put("737", 189);
+		seatMapping.put("b739_4k", 189);		
+		seatMapping.put("b737_4k", 149);
 		seatMapping.put("757-200", 239);
+		seatMapping.put("757-200_xp11", 239);
 		seatMapping.put("767-200", 290);
 		seatMapping.put("757-300", 295);
+		seatMapping.put("757-300_xp11", 295);
 		seatMapping.put("787", 335);
+		seatMapping.put("B7879", 335);
 		seatMapping.put("767-300", 351);
+		seatMapping.put("767-300ER_xp11", 351);
 		seatMapping.put("a330", 440);
 		seatMapping.put("A350", 440);
+		seatMapping.put("A350_xp11", 440);
 		seatMapping.put("747-100", 550);
+		seatMapping.put("B747-100 NASA", 550);
 		seatMapping.put("B748", 605);
+		seatMapping.put("SSG_B748-I_11", 605);
 		seatMapping.put("747-400", 660);
 	}
 
@@ -227,7 +250,12 @@ public class XPassengersUtils {
 								counter++;
 								scanner.close();
 								price = getPrice(eng,prop,toWeight);
-								seats = seatMapping.get(airplaneName);
+								if (seatMapping.get(airplaneName) == null) {
+									System.out.println("Seatmapping for airplane " + airplaneName + " not available");
+									seats = 0;
+								} else {
+									seats = seatMapping.get(airplaneName);
+								}
 								if (eng == prop) {
 									if (green_hi_N1 > 0) {
 										engType = 2;
@@ -258,7 +286,7 @@ public class XPassengersUtils {
 								airplaneData.put("fuel", maxFuel);
 								airplaneData.put("emptyweight", emptyWeight);
 								airplaneData.put("path", airplanePath);
-								airplaneData.put("enginges", eng);
+								airplaneData.put("engines", eng);
 								airplaneData.put("props", prop);
 								airplaneData.put("price", price);
 								airplaneData.put("seats", seats);
