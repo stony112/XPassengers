@@ -617,6 +617,24 @@ public class DatabaseAccess {
 		}
     	return 0;   	
     }
+
+	public int avgWhere(String column, String table, HashMap<String, Object> wheres) {
+		try {
+    		if (!dbInit) {
+        		initDB();
+        	}
+			Statement get = connect.createStatement();
+			ResultSet results = get.executeQuery("SELECT avg(" + column + ") FROM " + table + " where " + condition);
+	    	if (results.next()) {
+	    		int avg = results.getInt(1);
+	    		return avg;
+	    	}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return 0; 
+	}
     
     public void importLicenses() {
     	if (!dbInit) {

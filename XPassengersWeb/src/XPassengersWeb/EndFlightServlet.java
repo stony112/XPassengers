@@ -82,8 +82,14 @@ public class EndFlightServlet extends HttpServlet {
 			flightMap.put("points", points);
 			flightMap.put("distance", distance);
 			flightMap.put("gain", gain);
-			flightMap.put("satisfaction", satisfaction);
+			flightMap.put("satisfaction", satisfaction);			
 			dao.update("flights", flightMap, id);
+			int avgSatisfaction = dao.avgWhere("satisfaction", "flights", "airlineid=" + activeAirline) + 1;
+			HashMap<String, Object> updateAirline = new HashMap<String, Object>();
+			updateAirline.put("reputation", avgSatisfaction);
+			HashMap<String, Object> updateAirlineWheres = new HashMap<String, Object>();
+			updateAirlineWheres.put("id", activeAirline);
+			dao.update("airline", updateAirline, updateAirlineWheres);
 			dao.updateBalance(balance + gain);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
