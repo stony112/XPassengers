@@ -456,7 +456,7 @@ public class DatabaseAccess {
     		if (curLicense < 24) {
     			ResultSet newLicense = getSingleContent("*", "licenses", curLicense + 1);
 				if (newLicense.getFloat("hours") < flighthours) {
-					return newLicense.getInt("id");
+					return newLicense.getInt("short");
 				}
     		}
 		} catch (SQLException e) {
@@ -632,9 +632,7 @@ public class DatabaseAccess {
     		updateStatement.append("'");
     		updateStatement.append(name);
     		updateStatement.append("', short=");
-    		updateStatement.append("'");
-    		updateStatement.append(i);
-    		updateStatement.append("'");    	
+    		updateStatement.append(i);   	
 	    	PreparedStatement update;
 			try {
 				update = connect.prepareStatement(updateStatement.toString(),Statement.RETURN_GENERATED_KEYS);
