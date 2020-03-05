@@ -454,7 +454,9 @@ public class DatabaseAccess {
      	int license = -1;
     	try {
     		if (curLicense < 24) {
-    			ResultSet newLicense = getSingleContent("*", "licenses", curLicense + 1);
+				HashMap<String, Object> nLWheres = new HashMap<String, Object>();
+				nLWheres.put("short", curLicense + 1);
+				ResultSet newLicense = select("licenses", "*", nLWheres);
 				if (newLicense.getFloat("hours") < flighthours) {
 					return newLicense.getInt("short");
 				}
